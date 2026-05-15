@@ -15,21 +15,7 @@ repos:
         always_run: true
         stages: [commit-msg]
         args:
-          [
-            build,
-            chore,
-            ci,
-            docs,
-            feat,
-            fix,
-            perf,
-            refactor,
-            revert,
-            style,
-            test,
-            "!",
-            "(\\w+)",
-          ]
+          [build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test, '!', "(\\w+)"]
 
   # Core pre-commit hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -71,7 +57,7 @@ repos:
       - id: check-added-large-files
         name: ✓ Check large files
         description: Prevent committing files larger than the configured size.
-        args: ["--maxkb=5000"]
+        args: ['--maxkb=5000']
 
       - id: no-commit-to-branch
         name: ✓ Prevent commit to main
@@ -86,7 +72,7 @@ repos:
         name: ✓ Codespell
         description: Detect and fix common spelling mistakes in code and docs.
         args:
-          - "--ignore-words=.codespellignore"
+          - '--ignore-words=.codespellignore'
         files: \.(md|mdx|ya?ml|json|astro|ts|tsx|js|jsx|mjs|cjs|css|scss|html)$
         exclude: ^(package-lock\.json|yarn\.lock|pnpm-lock\.yaml)$
 
@@ -101,12 +87,19 @@ repos:
   # Local hooks
   - repo: local
     hooks:
+      - id: prettier
+        name: ✓ Prettier
+        description: Format JS/TS/Astro/CSS/Markdown/JSON/YAML with Prettier.
+        entry: npx prettier --write --ignore-unknown
+        language: system
+        files: \.(astro|ts|tsx|js|jsx|mjs|cjs|css|scss|json|md|mdx|ya?ml|html)$
+
       - id: no-coauthor-no-description
         name: ✓ No co-author or description
         description: >
           Block commits that contain Co-Authored-By or a description body.
           Only single-line commit messages are allowed.
-        entry: "bash -c 'MSG=$(cat \"$1\"); if echo \"$MSG\" | grep -iq \"Co-Authored-By:\"; then echo \"Error: Co-Authored-By is not allowed in commit messages.\" && exit 1; fi; if echo \"$MSG\" | grep -iq \"Signed-off-by:\"; then echo \"Error: Signed-off-by is not allowed in commit messages.\" && exit 1; fi; BODY=$(echo \"$MSG\" | sed \"/^#/d\" | tail -n +2 | sed \"/^$/d\"); if [ -n \"$BODY\" ]; then echo \"Error: Description body is not allowed. Use single-line commits only.\" && exit 1; fi' --"
+        entry: 'bash -c ''MSG=$(cat "$1"); if echo "$MSG" | grep -iq "Co-Authored-By:"; then echo "Error: Co-Authored-By is not allowed in commit messages." && exit 1; fi; if echo "$MSG" | grep -iq "Signed-off-by:"; then echo "Error: Signed-off-by is not allowed in commit messages." && exit 1; fi; BODY=$(echo "$MSG" | sed "/^#/d" | tail -n +2 | sed "/^$/d"); if [ -n "$BODY" ]; then echo "Error: Description body is not allowed. Use single-line commits only." && exit 1; fi'' --'
         language: system
         always_run: true
         stages: [commit-msg]
