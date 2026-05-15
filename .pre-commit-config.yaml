@@ -88,6 +88,7 @@ repos:
         args:
           - "--ignore-words=.codespellignore"
         files: \.(md|mdx|ya?ml|json|astro|ts|tsx|js|jsx|mjs|cjs|css|scss|html)$
+        exclude: ^(package-lock\.json|yarn\.lock|pnpm-lock\.yaml)$
 
   # Gitleaks
   - repo: https://github.com/gitleaks/gitleaks
