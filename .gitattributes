@@ -1,0 +1,50 @@
+# Global defaults
+* text=auto eol=lf
+
+# Source files
+*.astro text
+*.ts    text
+*.tsx   text
+*.js    text
+*.jsx   text
+*.mjs   text
+*.cjs   text
+*.svg   text
+*.css   text
+*.scss  text
+
+# Configuration & docs
+*.yml  text
+*.yaml text
+*.md   text
+*.mdx  text
+*.txt  text
+*.json text
+
+# Generated / lockfiles (do not count as language, hide from diffs)
+package-lock.json linguist-generated=true
+pnpm-lock.yaml    linguist-generated=true
+yarn.lock         linguist-generated=true
+dist/**           linguist-generated=true
+.astro/**         linguist-generated=true
+
+# Binary assets — images
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.avif binary
+*.ico  binary
+
+# Binary assets — web fonts (served to browsers, small files, regular git)
+*.woff  binary
+*.woff2 binary
+
+# Binary assets — source fonts (originals, larger, tracked via Git LFS)
+*.ttf filter=lfs diff=lfs merge=lfs -text
+*.otf filter=lfs diff=lfs merge=lfs -text
+
+# Binary assets — other
+*.pdf binary
+*.zip binary
