@@ -1,0 +1,31 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title="Message sent" description="Your message has been sent" />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <section class="section-hero">
+        <div class="wrap">
+          <div class="stack-32">
+            <div class="stack-16">
+              <h1 class="h-display">Message sent</h1>
+              <p class="lead content-width">Thanks for reaching out — I’ll get back to you soon.</p>
+            </div>
+            <a href="/" class="link-arrow self-start"
+              ><span aria-hidden="true">←</span> Back to home</a
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>
