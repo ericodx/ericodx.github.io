@@ -25,6 +25,8 @@ jobs:
         uses: withastro/action@v3
         with:
           node-version-file: .nvmrc
+        env:
+          PUBLIC_WEB3FORMS_ACCESS_KEY: ${{ secrets.PUBLIC_WEB3FORMS_ACCESS_KEY }}
 
   deploy:
     needs: build
