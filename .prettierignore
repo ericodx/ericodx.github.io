@@ -8,5 +8,8 @@ node_modules/
 # Generated
 package-lock.json
 
+# Large local utility stylesheet (skip formatting)
+src/styles/local-utilities.css
+
 # Backups
 *.bak
