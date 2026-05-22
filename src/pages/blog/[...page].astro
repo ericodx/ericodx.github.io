@@ -1,0 +1,123 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = (
+    await getCollection('blog', ({ data }) => import.meta.env.DEV || !data.draft)
+  ).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  return paginate(posts, { pageSize: 9 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const pageLabel = page.currentPage === 1 ? 'Blog' : `Blog — page ${page.currentPage}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={pageLabel} description="Notes on software engineering and developer tooling" />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <section
+        class="section-padding-x relative z-3 overflow-hidden bg-background-bg100 lg:pt-[240px] pb-10 pt-25 md:pb-15"
+      >
+        <div class="m-auto w-full xl:max-w-[1408px]">
+          <div class="flex flex-col gap-7">
+            <div class="flex flex-col gap-3">
+              <div class="v-h900n tracking-[-2px] text-text-t900 md:max-w-none lg:tracking-[-3px]">
+                <h1>Blog</h1>
+              </div>
+              <div class="v-p300 text-text-t900 sm:max-w-[830px]">
+                <p>
+                  Notes on what I learn building developer tools — Swift, code quality, and the
+                  small habits that compound. Updated when there’s something worth writing down, not
+                  on a schedule.
+                </p>
+              </div>
+            </div>
+            <div class="posts-grid">
+              {
+                page.data.map((post) => (
+                  <a href={`/blog/${post.id}/`} class="card">
+                    <span class="card__meta">
+                      <FormattedDate date={post.data.pubDate} />
+                    </span>
+                    <span class="card__title">{post.data.title}</span>
+                    <span class="card__body">{post.data.description}</span>
+                  </a>
+                ))
+              }
+            </div>
+            {
+              (page.url.prev || page.url.next) && (
+                <nav class="pagination" aria-label="Blog pages">
+                  <div class="pagination__side">
+                    {page.url.prev && (
+                      <a href={page.url.prev} class="link-arrow">
+                        <span aria-hidden="true">←</span> Newer posts
+                      </a>
+                    )}
+                  </div>
+                  <span class="pagination__center">
+                    Page {page.currentPage} of {page.lastPage}
+                  </span>
+                  <div class="pagination__side pagination__side--right">
+                    {page.url.next && (
+                      <a href={page.url.next} class="link-arrow">
+                        Older posts <span aria-hidden="true">→</span>
+                      </a>
+                    )}
+                  </div>
+                </nav>
+              )
+            }
+          </div>
+        </div>
+      </section>
+    </main>
+    <Footer />
+
+    <style>
+      .posts-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      @media (min-width: 640px) {
+        .posts-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (min-width: 960px) {
+        .posts-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      .pagination {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 16px;
+        margin-top: 24px;
+      }
+      .pagination__side {
+        display: flex;
+      }
+      .pagination__side--right {
+        justify-content: flex-end;
+      }
+      .pagination__center {
+        font-size: 13px;
+        color: #888;
+        letter-spacing: 0.02em;
+      }
+    </style>
+  </body>
+</html>
