@@ -4,11 +4,10 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
 
-import tailwindcss from '@tailwindcss/vite';
-
 // https://astro.build/config
 export default defineConfig({
   site: 'https://ericodx.io',
+  trailingSlash: 'always',
   integrations: [mdx(), sitemap()],
 
   fonts: [
@@ -35,8 +34,4 @@ export default defineConfig({
       },
     },
   ],
-
-  vite: {
-    plugins: [tailwindcss()],
-  },
 });
