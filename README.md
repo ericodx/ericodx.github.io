@@ -7,7 +7,6 @@ Live at <https://ericodx.io>.
 ## Stack
 
 - [Astro](https://astro.build/) — Blog template, TypeScript strict
-- [Tailwind CSS](https://tailwindcss.com/) v4
 - [Prettier](https://prettier.io/) with `prettier-plugin-astro`
 - [pre-commit](https://pre-commit.com/) hooks (Conventional Commits, gitleaks, codespell, line endings, secrets, large files)
 - Hosted on [GitHub Pages](https://pages.github.com/), deployed via GitHub Actions
