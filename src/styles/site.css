@@ -10355,9 +10355,12 @@ html {
 
 .post-body {
   max-width: 720px;
-  color: #1f1f2f;
-  font-size: 18px;
-  line-height: 1.7;
+  font-family: 'TT Norms Web', Arial, sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  text-transform: none;
+  line-height: 1.6;
+  color: rgb(19 22 35);
 }
 
 .post-body > :first-child {

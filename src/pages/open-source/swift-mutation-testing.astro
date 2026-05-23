@@ -80,7 +80,7 @@ const docs = [
           <div class="stack-32">
             <div class="stack-16">
               <h1 class="h-display">Swift Mutation Testing</h1>
-              <p class="lead content-width">
+              <p class="v-p300 text-text-t900 sm:max-w-[830px]">
                 Traditional test coverage tells you which lines ran — not whether the tests would
                 actually catch a bug. Mutation testing introduces small, controlled changes to your
                 code and re-runs your test suite. Every change that goes undetected exposes a
@@ -114,7 +114,7 @@ brew install swift-mutation-testing</pre>
           <div class="stack-32">
             <div class="stack-12 content-width">
               <h2 class="h-section">Example mutation</h2>
-              <p class="lead">
+              <p class="v-p300 text-text-t900">
                 A small change to the source. If your tests still pass against the mutant, you have
                 a gap — the test you thought protected this line doesn’t actually distinguish the
                 original behavior from the change.
@@ -131,7 +131,7 @@ brew install swift-mutation-testing</pre>
               </div>
             </div>
             <div class="content-width stack-16">
-              <p class="lead">
+              <p class="v-p300 text-text-t900">
                 A mutation test works by deliberately corrupting your code in small, controlled ways
                 and then asking whether your test suite notices. The change above — <code
                   class="inline-code">&gt;=</code
@@ -140,7 +140,7 @@ brew install swift-mutation-testing</pre>
                 the outcome. A mutation that passes the test suite is said to have <em>survived</em
                 >; one that fails is <em>killed</em>.
               </p>
-              <p class="lead">
+              <p class="v-p300 text-text-t900">
                 What survival reveals is uncomfortable but useful: a test that ran, a line that was
                 covered, an assertion that didn’t actually distinguish the original behavior from
                 the corrupted one. Coverage tells you which lines your tests touched. Mutation

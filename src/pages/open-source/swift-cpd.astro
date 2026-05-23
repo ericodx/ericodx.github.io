@@ -80,7 +80,7 @@ const docs = [
           <div class="stack-32">
             <div class="stack-16">
               <h1 class="h-display">Swift Code Paste Detector</h1>
-              <p class="lead content-width">
+              <p class="v-p300 text-text-t900 sm:max-w-[830px]">
                 Duplicated logic looks small until it isn’t. Two copies drift apart, bugs get fixed
                 in one place and not the other, behavior diverges between features that should be
                 consistent — and every refactor multiplies in cost. swift-cpd finds the duplicates
@@ -112,7 +112,7 @@ brew install swift-cpd</pre>
           <div class="stack-32">
             <div class="stack-12 content-width">
               <h2 class="h-section">What it detects</h2>
-              <p class="lead">
+              <p class="v-p300 text-text-t900">
                 Same shape, different types. Renamed variables, different value checks — but the
                 control flow is identical. swift-cpd surfaces this as a structural clone, so you can
                 decide whether to extract a shared validator or accept the duplication consciously.
@@ -129,14 +129,14 @@ brew install swift-cpd</pre>
               </div>
             </div>
             <div class="content-width stack-16">
-              <p class="lead">
+              <p class="v-p300 text-text-t900">
                 The simplest case is the exact clone (Type 1), where the same block of code appears
                 in more than one place and only whitespace or comments differ between the copies.
                 This is what classic copy-paste creates: someone needed the same logic somewhere
                 else, duplicated it, and moved on. It is also the easiest kind to spot once you know
                 to look.
               </p>
-              <p class="lead">
+              <p class="v-p300 text-text-t900">
                 A parameterized clone (Type 2) has the same shape as another block, but the names
                 and values inside have been changed. The example above is one of these: two
                 validators with identical control flow, only operating on different types. This is
@@ -144,7 +144,7 @@ brew install swift-cpd</pre>
                 tweaked to fit a new context. swift-cpd sees past the renaming and reports both
                 fragments as the same logic.
               </p>
-              <p class="lead">
+              <p class="v-p300 text-text-t900">
                 A near-miss clone (Type 3) is one where two blocks share most of their structure,
                 but somewhere along the way a few statements were added, removed, or modified. Maybe
                 an extra condition was inserted in one place, or a log line dropped in the other.
@@ -152,7 +152,7 @@ brew install swift-cpd</pre>
                 them as related — you can decide how forgiving the match should be by adjusting the
                 similarity threshold.
               </p>
-              <p class="lead">
+              <p class="v-p300 text-text-t900">
                 The hardest class is the semantic clone (Type 4). Here, two pieces of code look
                 completely different on the surface — different variable names, different control
                 flow, even a different order of operations — but they do the same thing. This is

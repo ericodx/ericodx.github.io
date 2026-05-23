@@ -145,7 +145,7 @@ const docs = [
           <div class="stack-32">
             <div class="stack-16">
               <h1 class="h-display">Swift Marshal</h1>
-              <p class="lead content-width">
+              <p class="v-p300 text-text-t900 sm:max-w-[830px]">
                 Inconsistent member ordering quietly compounds across a codebase. It increases
                 cognitive load when navigating files, adds friction during code reviews, and creates
                 needless inconsistency across teams. Swift Marshal makes that shape predictable — so
@@ -178,7 +178,7 @@ brew install swift-marshal</pre>
           <div class="stack-32">
             <div class="stack-12 content-width">
               <h2 class="h-section">Before &amp; after</h2>
-              <p class="lead">
+              <p class="v-p300 text-text-t900">
                 Same type, two arrangements. The default ordering puts initializers and type-level
                 state first, instance state next, and behavior at the bottom.
               </p>
@@ -194,14 +194,14 @@ brew install swift-marshal</pre>
               </div>
             </div>
             <div class="content-width stack-16">
-              <p class="lead">
+              <p class="v-p300 text-text-t900">
                 Swift Marshal parses your source with SwiftSyntax, finds every type declaration, and
                 reorders its members according to a canonical sequence defined in a small YAML
                 config. Comments and other trivia attached to a declaration travel with it — if you
                 have a <code class="inline-code">// MARK:</code> note above a method, it moves wherever
                 the method moves. The output is byte-identical to the original except for member order.
               </p>
-              <p class="lead">
+              <p class="v-p300 text-text-t900">
                 Once enforced project-wide, every type tells the same story in the same order: what
                 it requires (typealiases, initializers), what it holds (properties), what it does
                 (methods). Reading a file becomes orientation rather than discovery, reviews stop
