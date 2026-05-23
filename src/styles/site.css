@@ -10740,25 +10740,25 @@ html {
   width: 100%;
   padding: 40px 16px;
 }
-@media (min-width: 648px) {
+@media (min-width: 768px) {
   .site-footer-wrap {
     padding-left: 24px;
     padding-right: 24px;
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .site-footer-wrap {
     padding-left: 80px;
     padding-right: 80px;
   }
 }
-@media (min-width: 1024px) {
+@media (min-width: 1280px) {
   .site-footer-wrap {
     padding-left: 156px;
     padding-right: 156px;
   }
 }
-@media (min-width: 1280px) {
+@media (min-width: 1729px) {
   .site-footer-pressed {
     padding-left: 256px;
     padding-right: 256px;
