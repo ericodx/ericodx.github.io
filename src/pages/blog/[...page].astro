@@ -30,6 +30,13 @@ const pageLabel = page.currentPage === 1 ? 'Blog' : `Blog — page ${page.curren
             </span>
             <span class="card__title">{post.data.title}</span>
             <span class="card__body">{post.data.description}</span>
+            {post.data.tags.length > 0 && (
+              <span class="card__tags">
+                {post.data.tags.slice(0, 3).map((tag) => (
+                  <span class="card__tag">{tag}</span>
+                ))}
+              </span>
+            )}
           </a>
         ))
       }

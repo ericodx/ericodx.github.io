@@ -917,3 +917,54 @@ html {
   color: #888;
   letter-spacing: 0.02em;
 }
+
+/* === Blog tags === */
+
+.card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.card__tag {
+  font-family: 'iA Writer Quattro', Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1;
+  padding: 4px 8px;
+  background: #eef0f4;
+  color: #1f1f2f;
+  border-radius: 9999px;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.card:hover .card__tag {
+  background: #2a2a3a;
+  color: #cbd5e1;
+}
+
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.post-tag {
+  font-family: 'iA Writer Quattro', Arial, sans-serif;
+  font-size: 13px;
+  padding: 4px 10px;
+  background: #eef0f4;
+  color: #1f1f2f;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.post-tag:hover {
+  background: #1f1f2f;
+  color: #fff;
+}

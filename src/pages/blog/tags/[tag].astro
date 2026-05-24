@@ -1,0 +1,59 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../../components/FormattedDate.astro';
+import PageHero from '../../../components/PageHero.astro';
+import Page from '../../../layouts/Page.astro';
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection('blog', ({ data }) => import.meta.env.DEV || !data.draft);
+  const tagSet = new Set<string>();
+  for (const post of posts) {
+    for (const tag of post.data.tags) {
+      tagSet.add(tag);
+    }
+  }
+  return Array.from(tagSet).map((tag) => {
+    const slug = tag.toLowerCase().replace(/\s+/g, '-');
+    const filtered = posts
+      .filter((p) => p.data.tags.includes(tag))
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+    return {
+      params: { tag: slug },
+      props: { tag, posts: filtered },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+const { tag, posts } = Astro.props;
+const lead =
+  posts.length === 1
+    ? `1 post tagged with "${tag}".`
+    : `${posts.length} posts tagged with "${tag}".`;
+---
+
+<Page title={`Tag: ${tag}`} description={`Blog posts tagged with ${tag}`}>
+  <PageHero title={tag} lead={lead}>
+    <div class="posts-grid">
+      {
+        posts.map((post) => (
+          <a href={`/blog/${post.id}/`} class="card">
+            <span class="card__meta">
+              <FormattedDate date={post.data.pubDate} />
+            </span>
+            <span class="card__title">{post.data.title}</span>
+            <span class="card__body">{post.data.description}</span>
+            {post.data.tags.length > 0 && (
+              <span class="card__tags">
+                {post.data.tags.slice(0, 3).map((t) => (
+                  <span class="card__tag">{t}</span>
+                ))}
+              </span>
+            )}
+          </a>
+        ))
+      }
+    </div>
+    <a href="/blog/" class="link-arrow self-start"><span aria-hidden="true">←</span> All posts</a>
+  </PageHero>
+</Page>

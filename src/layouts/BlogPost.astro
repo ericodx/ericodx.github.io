@@ -7,7 +7,7 @@ import { SITE_TITLE } from '../consts';
 
 type Props = CollectionEntry<'blog'>['data'] & { readingTime: number };
 
-const { title, description, pubDate, updatedDate, heroImage, readingTime } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, readingTime, tags } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
 const authorURL = new URL('/about/', Astro.site).toString();
@@ -53,6 +53,20 @@ if (heroImage) {
             }
             {` · ${readingTime} min read`}
           </span>
+          {
+            tags.length > 0 && (
+              <div class="post-tags">
+                {tags.map((tag) => (
+                  <a
+                    href={`/blog/tags/${tag.toLowerCase().replace(/\s+/g, '-')}/`}
+                    class="post-tag"
+                  >
+                    {tag}
+                  </a>
+                ))}
+              </div>
+            )
+          }
         </div>
 
         {
