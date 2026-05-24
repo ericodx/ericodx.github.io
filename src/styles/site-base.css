@@ -29,6 +29,10 @@ body {
   min-height: 100vh;
 }
 
+main {
+  flex: 1;
+}
+
 /* === Font faces === */
 @font-face {
   font-family: 'iA Writer Quattro';
