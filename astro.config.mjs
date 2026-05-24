@@ -9,6 +9,10 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://ericodx.io',
   trailingSlash: 'always',
+  prefetch: {
+    defaultStrategy: 'hover',
+    prefetchAll: true,
+  },
   integrations: [mdx(), sitemap()],
   vite: { plugins: [tailwindcss()] },
 });
