@@ -1,8 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" fill="#1f1f2f"/>
-  <style>
-    @media (prefers-color-scheme: dark) {
-      rect { fill: #fff; }
-    }
-  </style>
+  <rect width="32" height="32" rx="3" fill="#fff"/>
+  <text x="16" y="24" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="26" fill="#1f1f2f" text-anchor="middle">e</text>
 </svg>
