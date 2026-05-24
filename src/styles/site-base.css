@@ -351,25 +351,6 @@ html {
   color: #cbd5e1;
 }
 
-/* === Chips === */
-
-.chip-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 10px;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 14px;
-  background: #eef0f4;
-  color: #1f1f2f;
-  border-radius: 9999px;
-  font-size: 14px;
-  line-height: 1.4;
-}
-
 /* === Long-form post body === */
 
 .post-body {
