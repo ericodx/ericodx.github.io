@@ -949,3 +949,35 @@ html {
   background: #1f1f2f;
   color: #fff;
 }
+
+/* === About: magazine-style float === */
+
+.about-bio::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.about-bio p {
+  margin: 0 0 1.25em 0;
+}
+
+.about-bio p:last-child {
+  margin-bottom: 0;
+}
+
+.about-avatar {
+  width: 240px;
+  height: 240px;
+  border-radius: 16px;
+  object-fit: cover;
+  margin: 0 0 16px 0;
+}
+
+@media (min-width: 768px) {
+  .about-avatar {
+    float: left;
+    margin: 6px 24px 8px 0;
+    shape-outside: inset(0);
+  }
+}

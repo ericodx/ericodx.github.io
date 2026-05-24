@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import avatar from '../assets/about/avatar.jpg';
 import Page from '../layouts/Page.astro';
 ---
 
@@ -10,7 +12,14 @@ import Page from '../layouts/Page.astro';
 
         <div class="stack-16">
           <span class="label">Background</span>
-          <div class="content-width stack-16">
+          <div class="about-bio content-width">
+            <Image
+              src={avatar}
+              alt="Érico Perez Neto"
+              width={240}
+              height={240}
+              class="about-avatar"
+            />
             <p class="v-p300 text-text-t900">
               I’m Érico, a Staff Engineer based in São Paulo. I’ve been writing software for 30
               years, with the last 16 dedicated to Apple platforms — primarily iOS apps in
