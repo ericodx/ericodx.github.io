@@ -5,12 +5,14 @@ import FormattedDate from '../components/FormattedDate.astro';
 import Page from './Page.astro';
 import { SITE_TITLE } from '../consts';
 
-type Props = CollectionEntry<'blog'>['data'] & { readingTime: number };
+type Props = CollectionEntry<'blog'>['data'] & { readingTime: number; slug: string };
 
-const { title, description, pubDate, updatedDate, heroImage, readingTime, tags } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, readingTime, tags, slug } =
+  Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
 const authorURL = new URL('/about/', Astro.site).toString();
+const ogImageUrl = `/og/${slug}.png`;
 
 const jsonLd: Record<string, unknown> = {
   '@context': 'https://schema.org',
@@ -34,7 +36,7 @@ if (heroImage) {
 }
 ---
 
-<Page title={title} description={description} image={heroImage}>
+<Page title={title} description={description} ogImageUrl={ogImageUrl}>
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
   <section class="section-hero">
     <div class="wrap">
