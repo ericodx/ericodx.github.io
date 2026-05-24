@@ -1,6 +1,6 @@
 ---
 title: 'When Your Mutation Score Hits 100%, Something Is Wrong'
-description: '*From a parser bug to a six-state taxonomy: the design decisions that turn raw test output into an honest mutation score.*'
+description: 'From a parser bug to a six-state taxonomy: the design decisions that turn raw test output into an honest mutation score.'
 pubDate: 2026-02-07
 ---
 

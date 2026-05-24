@@ -1,6 +1,6 @@
 ---
 title: "Continuations Don't Respond to Cancellation"
-description: '*How a glance at Activity Monitor revealed that `withCheckedThrowingContinuation` ignores task cancellation — and why external resources always need...'
+description: 'How a glance at Activity Monitor revealed that withCheckedThrowingContinuation ignores task cancellation — and why external resources always need...'
 pubDate: 2026-04-04
 ---
 

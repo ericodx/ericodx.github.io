@@ -1,6 +1,6 @@
 ---
 title: 'Why I Built a Mutation Testing Tool from Scratch'
-description: '*From the limits of code coverage to a parallel mutation pipeline in Swift 6 — the reasoning, the architecture, and the benchmarks.*'
+description: 'From the limits of code coverage to a parallel mutation pipeline in Swift 6 — the reasoning, the architecture, and the benchmarks.'
 pubDate: 2026-01-10
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: 'The Right Question Changes the Algorithm'
-description: '*When parallelism wasn''t enough, I stopped asking "how do I run more mutants at once?" and started asking "how do I eliminate redundant compilations?" --...'
+description: 'When parallelism wasn''t enough, I stopped asking "how do I run more mutants at once?" and started asking "how do I eliminate redundant compilations?" --...'
 pubDate: 2026-02-21
 ---
 
