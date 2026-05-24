@@ -1,7 +1,6 @@
 ---
-import BaseHead from '../../components/BaseHead.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
+import ToolHero from '../../components/ToolHero.astro';
+import Page from '../../layouts/Page.astro';
 
 const beforeCode = `struct UserSession {
     // MARK: - Instance methods
@@ -129,128 +128,92 @@ const docs = [
 ];
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead
-      title="Swift Marshal"
-      description="Ensure consistent member ordering in Swift types to improve readability and maintainability."
-    />
-  </head>
-  <body>
-    <Header />
-    <main>
-      <section class="section-hero">
-        <div class="wrap">
-          <div class="stack-32">
-            <div class="stack-16">
-              <h1 class="h-display">Swift Marshal</h1>
-              <p class="v-p300 text-text-t900 sm:max-w-[830px]">
-                Inconsistent member ordering quietly compounds across a codebase. It increases
-                cognitive load when navigating files, adds friction during code reviews, and creates
-                needless inconsistency across teams. Swift Marshal makes that shape predictable — so
-                reading code gets faster and reviews focus on what actually matters.
-              </p>
-            </div>
-            <div class="install-block">
-              <span class="label">Install</span>
-              <pre
-                class="code-block">brew tap ericodx/homebrew-tools
-brew install swift-marshal</pre>
-            </div>
-            <div class="cta-row">
-              <a
-                href="https://github.com/ericodx/swift-marshal"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="btn-primary">View on GitHub</a
-              >
-              <a href="/open-source/" class="link-arrow"
-                >All tools<span aria-hidden="true">→</span></a
-              >
-            </div>
+<Page
+  title="Swift Marshal"
+  description="Ensure consistent member ordering in Swift types to improve readability and maintainability."
+>
+  <ToolHero
+    slug="swift-marshal"
+    title="Swift Marshal"
+    lead="Inconsistent member ordering quietly compounds across a codebase. It increases cognitive load when navigating files, adds friction during code reviews, and creates needless inconsistency across teams. Swift Marshal makes that shape predictable — so reading code gets faster and reviews focus on what actually matters."
+  />
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Before &amp; after</h2>
+          <p class="v-p300 text-text-t900">
+            Same type, two arrangements. The default ordering puts initializers and type-level state
+            first, instance state next, and behavior at the bottom.
+          </p>
+        </div>
+        <div class="cards-grid cards-grid--wide">
+          <div class="stack-10">
+            <span class="label">Before</span>
+            <pre class="code-block">{beforeCode}</pre>
+          </div>
+          <div class="stack-10">
+            <span class="label">After</span>
+            <pre class="code-block">{afterCode}</pre>
           </div>
         </div>
-      </section>
+        <div class="content-width stack-16">
+          <p class="v-p300 text-text-t900">
+            Swift Marshal parses your source with SwiftSyntax, finds every type declaration, and
+            reorders its members according to a canonical sequence defined in a small YAML config.
+            Comments and other trivia attached to a declaration travel with it — if you have a <code
+              class="inline-code">// MARK:</code
+            > note above a method, it moves wherever the method moves. The output is byte-identical to
+            the original except for member order.
+          </p>
+          <p class="v-p300 text-text-t900">
+            Once enforced project-wide, every type tells the same story in the same order: what it
+            requires (typealiases, initializers), what it holds (properties), what it does
+            (methods). Reading a file becomes orientation rather than discovery, reviews stop
+            arguing about where a new declaration should sit, and merge conflicts in the same area
+            drop close to zero — because two developers writing in the same type land their changes
+            in predictable positions.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      <section class="section-divider">
-        <div class="wrap">
-          <div class="stack-32">
-            <div class="stack-12 content-width">
-              <h2 class="h-section">Before &amp; after</h2>
-              <p class="v-p300 text-text-t900">
-                Same type, two arrangements. The default ordering puts initializers and type-level
-                state first, instance state next, and behavior at the bottom.
-              </p>
-            </div>
-            <div class="cards-grid cards-grid--wide">
-              <div class="stack-10">
-                <span class="label">Before</span>
-                <pre class="code-block">{beforeCode}</pre>
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <h2 class="h-section content-width">Features</h2>
+        <div class="cards-grid cards-grid--narrow">
+          {
+            features.map((f) => (
+              <div class="card">
+                <span class="card__title">{f.title}</span>
+                <span class="card__body">{f.body}</span>
               </div>
-              <div class="stack-10">
-                <span class="label">After</span>
-                <pre class="code-block">{afterCode}</pre>
-              </div>
-            </div>
-            <div class="content-width stack-16">
-              <p class="v-p300 text-text-t900">
-                Swift Marshal parses your source with SwiftSyntax, finds every type declaration, and
-                reorders its members according to a canonical sequence defined in a small YAML
-                config. Comments and other trivia attached to a declaration travel with it — if you
-                have a <code class="inline-code">// MARK:</code> note above a method, it moves wherever
-                the method moves. The output is byte-identical to the original except for member order.
-              </p>
-              <p class="v-p300 text-text-t900">
-                Once enforced project-wide, every type tells the same story in the same order: what
-                it requires (typealiases, initializers), what it holds (properties), what it does
-                (methods). Reading a file becomes orientation rather than discovery, reviews stop
-                arguing about where a new declaration should sit, and merge conflicts in the same
-                area drop close to zero — because two developers writing in the same type land their
-                changes in predictable positions.
-              </p>
-            </div>
-          </div>
+            ))
+          }
         </div>
-      </section>
+      </div>
+    </div>
+  </section>
 
-      <section class="section-divider">
-        <div class="wrap">
-          <div class="stack-32">
-            <h2 class="h-section content-width">Features</h2>
-            <div class="cards-grid cards-grid--narrow">
-              {
-                features.map((f) => (
-                  <div class="card">
-                    <span class="card__title">{f.title}</span>
-                    <span class="card__body">{f.body}</span>
-                  </div>
-                ))
-              }
-            </div>
-          </div>
+  <section class="section-divider section-divider--end">
+    <div class="wrap">
+      <div class="stack-32">
+        <h2 class="h-section content-width">Documentation</h2>
+        <div class="cards-grid">
+          {
+            docs.map((d) => (
+              <a href={d.href} target="_blank" rel="noopener noreferrer" class="card">
+                <span class="card__title">{d.name}</span>
+                <span class="card__body">{d.desc}</span>
+              </a>
+            ))
+          }
         </div>
-      </section>
-
-      <section class="section-divider section-divider--end">
-        <div class="wrap">
-          <div class="stack-32">
-            <h2 class="h-section content-width">Documentation</h2>
-            <div class="cards-grid">
-              {
-                docs.map((d) => (
-                  <a href={d.href} target="_blank" rel="noopener noreferrer" class="card">
-                    <span class="card__title">{d.name}</span>
-                    <span class="card__body">{d.desc}</span>
-                  </a>
-                ))
-              }
-            </div>
-            <a href="#top" class="back-to-top">↑ Back to top</a>
-          </div>
-        </div>
-      </section>
-    </main>
-    <Footer />
-  </body>
-</html>
+        <a href="#top" class="back-to-top">↑ Back to top</a>
+      </div>
+    </div>
+  </section>
+</Page>

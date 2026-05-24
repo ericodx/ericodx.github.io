@@ -1,7 +1,6 @@
 ---
-import BaseHead from '../../components/BaseHead.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
+import ToolHero from '../../components/ToolHero.astro';
+import Page from '../../layouts/Page.astro';
 
 const cloneA = `// Sources/App/Services/UserService.swift
 
@@ -64,144 +63,105 @@ const docs = [
 ];
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead
-      title="Swift CPD"
-      description="Detect and eliminate duplicated logic in Swift and Objective-C/C codebases to improve maintainability and code quality."
-    />
-  </head>
-  <body>
-    <Header />
-    <main>
-      <section class="section-hero">
-        <div class="wrap">
-          <div class="stack-32">
-            <div class="stack-16">
-              <h1 class="h-display">Swift Code Paste Detector</h1>
-              <p class="v-p300 text-text-t900 sm:max-w-[830px]">
-                Duplicated logic looks small until it isn’t. Two copies drift apart, bugs get fixed
-                in one place and not the other, behavior diverges between features that should be
-                consistent — and every refactor multiplies in cost. swift-cpd finds the duplicates
-                before they compound, through structural analysis across Swift, Objective-C, and C.
-              </p>
-            </div>
-            <div class="install-block">
-              <span class="label">Install</span>
-              <pre class="code-block">brew tap ericodx/homebrew-tools
-brew install swift-cpd</pre>
-            </div>
-            <div class="cta-row">
-              <a
-                href="https://github.com/ericodx/swift-cpd"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="btn-primary">View on GitHub</a
-              >
-              <a href="/open-source/" class="link-arrow"
-                >All tools<span aria-hidden="true">→</span></a
-              >
-            </div>
+<Page
+  title="Swift CPD"
+  description="Detect and eliminate duplicated logic in Swift and Objective-C/C codebases to improve maintainability and code quality."
+>
+  <ToolHero
+    slug="swift-cpd"
+    title="Swift Code Paste Detector"
+    lead="Duplicated logic looks small until it isn’t. Two copies drift apart, bugs get fixed in one place and not the other, behavior diverges between features that should be consistent — and every refactor multiplies in cost. swift-cpd finds the duplicates before they compound, through structural analysis across Swift, Objective-C, and C."
+  />
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">What it detects</h2>
+          <p class="v-p300 text-text-t900">
+            Same shape, different types. Renamed variables, different value checks — but the control
+            flow is identical. swift-cpd surfaces this as a structural clone, so you can decide
+            whether to extract a shared validator or accept the duplication consciously.
+          </p>
+        </div>
+        <div class="cards-grid cards-grid--wide">
+          <div class="stack-10">
+            <span class="label">File A</span>
+            <pre class="code-block">{cloneA}</pre>
+          </div>
+          <div class="stack-10">
+            <span class="label">File B</span>
+            <pre class="code-block">{cloneB}</pre>
           </div>
         </div>
-      </section>
+        <div class="content-width stack-16">
+          <p class="v-p300 text-text-t900">
+            The simplest case is the exact clone (Type 1), where the same block of code appears in
+            more than one place and only whitespace or comments differ between the copies. This is
+            what classic copy-paste creates: someone needed the same logic somewhere else,
+            duplicated it, and moved on. It is also the easiest kind to spot once you know to look.
+          </p>
+          <p class="v-p300 text-text-t900">
+            A parameterized clone (Type 2) has the same shape as another block, but the names and
+            values inside have been changed. The example above is one of these: two validators with
+            identical control flow, only operating on different types. This is what happens when
+            copy-paste meets a small edit — the code was duplicated and then tweaked to fit a new
+            context. swift-cpd sees past the renaming and reports both fragments as the same logic.
+          </p>
+          <p class="v-p300 text-text-t900">
+            A near-miss clone (Type 3) is one where two blocks share most of their structure, but
+            somewhere along the way a few statements were added, removed, or modified. Maybe an
+            extra condition was inserted in one place, or a log line dropped in the other. The
+            intent is still clearly the same on both sides, and swift-cpd still recognizes them as
+            related — you can decide how forgiving the match should be by adjusting the similarity
+            threshold.
+          </p>
+          <p class="v-p300 text-text-t900">
+            The hardest class is the semantic clone (Type 4). Here, two pieces of code look
+            completely different on the surface — different variable names, different control flow,
+            even a different order of operations — but they do the same thing. This is where
+            swift-cpd reaches beyond text and structure to compare actual behavior, catching
+            rewrites and reorganizations that line-based or token-based detectors miss entirely.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      <section class="section-divider">
-        <div class="wrap">
-          <div class="stack-32">
-            <div class="stack-12 content-width">
-              <h2 class="h-section">What it detects</h2>
-              <p class="v-p300 text-text-t900">
-                Same shape, different types. Renamed variables, different value checks — but the
-                control flow is identical. swift-cpd surfaces this as a structural clone, so you can
-                decide whether to extract a shared validator or accept the duplication consciously.
-              </p>
-            </div>
-            <div class="cards-grid cards-grid--wide">
-              <div class="stack-10">
-                <span class="label">File A</span>
-                <pre class="code-block">{cloneA}</pre>
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <h2 class="h-section content-width">Features</h2>
+        <div class="cards-grid cards-grid--narrow">
+          {
+            features.map((f) => (
+              <div class="card">
+                <span class="card__title">{f.title}</span>
+                <span class="card__body">{f.body}</span>
               </div>
-              <div class="stack-10">
-                <span class="label">File B</span>
-                <pre class="code-block">{cloneB}</pre>
-              </div>
-            </div>
-            <div class="content-width stack-16">
-              <p class="v-p300 text-text-t900">
-                The simplest case is the exact clone (Type 1), where the same block of code appears
-                in more than one place and only whitespace or comments differ between the copies.
-                This is what classic copy-paste creates: someone needed the same logic somewhere
-                else, duplicated it, and moved on. It is also the easiest kind to spot once you know
-                to look.
-              </p>
-              <p class="v-p300 text-text-t900">
-                A parameterized clone (Type 2) has the same shape as another block, but the names
-                and values inside have been changed. The example above is one of these: two
-                validators with identical control flow, only operating on different types. This is
-                what happens when copy-paste meets a small edit — the code was duplicated and then
-                tweaked to fit a new context. swift-cpd sees past the renaming and reports both
-                fragments as the same logic.
-              </p>
-              <p class="v-p300 text-text-t900">
-                A near-miss clone (Type 3) is one where two blocks share most of their structure,
-                but somewhere along the way a few statements were added, removed, or modified. Maybe
-                an extra condition was inserted in one place, or a log line dropped in the other.
-                The intent is still clearly the same on both sides, and swift-cpd still recognizes
-                them as related — you can decide how forgiving the match should be by adjusting the
-                similarity threshold.
-              </p>
-              <p class="v-p300 text-text-t900">
-                The hardest class is the semantic clone (Type 4). Here, two pieces of code look
-                completely different on the surface — different variable names, different control
-                flow, even a different order of operations — but they do the same thing. This is
-                where swift-cpd reaches beyond text and structure to compare actual behavior,
-                catching rewrites and reorganizations that line-based or token-based detectors miss
-                entirely.
-              </p>
-            </div>
-          </div>
+            ))
+          }
         </div>
-      </section>
+      </div>
+    </div>
+  </section>
 
-      <section class="section-divider">
-        <div class="wrap">
-          <div class="stack-32">
-            <h2 class="h-section content-width">Features</h2>
-            <div class="cards-grid cards-grid--narrow">
-              {
-                features.map((f) => (
-                  <div class="card">
-                    <span class="card__title">{f.title}</span>
-                    <span class="card__body">{f.body}</span>
-                  </div>
-                ))
-              }
-            </div>
-          </div>
+  <section class="section-divider section-divider--end">
+    <div class="wrap">
+      <div class="stack-32">
+        <h2 class="h-section content-width">Documentation</h2>
+        <div class="cards-grid">
+          {
+            docs.map((d) => (
+              <a href={d.href} target="_blank" rel="noopener noreferrer" class="card">
+                <span class="card__title">{d.name}</span>
+                <span class="card__body">{d.desc}</span>
+              </a>
+            ))
+          }
         </div>
-      </section>
-
-      <section class="section-divider section-divider--end">
-        <div class="wrap">
-          <div class="stack-32">
-            <h2 class="h-section content-width">Documentation</h2>
-            <div class="cards-grid">
-              {
-                docs.map((d) => (
-                  <a href={d.href} target="_blank" rel="noopener noreferrer" class="card">
-                    <span class="card__title">{d.name}</span>
-                    <span class="card__body">{d.desc}</span>
-                  </a>
-                ))
-              }
-            </div>
-            <a href="#top" class="back-to-top">↑ Back to top</a>
-          </div>
-        </div>
-      </section>
-    </main>
-    <Footer />
-  </body>
-</html>
+        <a href="#top" class="back-to-top">↑ Back to top</a>
+      </div>
+    </div>
+  </section>
+</Page>

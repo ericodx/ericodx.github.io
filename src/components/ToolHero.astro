@@ -1,0 +1,32 @@
+---
+interface Props {
+  title: string;
+  lead: string;
+  slug: string;
+}
+
+const { title, lead, slug } = Astro.props;
+const githubUrl = `https://github.com/ericodx/${slug}`;
+const brewInstall = `brew tap ericodx/homebrew-tools\nbrew install ${slug}`;
+---
+
+<section class="section-hero">
+  <div class="wrap">
+    <div class="stack-32">
+      <div class="stack-16">
+        <h1 class="h-display">{title}</h1>
+        <p class="v-p300 text-text-t900 sm:max-w-[830px]">{lead}</p>
+      </div>
+      <div class="install-block">
+        <span class="label">Install</span>
+        <pre class="code-block">{brewInstall}</pre>
+      </div>
+      <div class="cta-row">
+        <a href={githubUrl} target="_blank" rel="noopener noreferrer" class="btn-primary"
+          >View on GitHub</a
+        >
+        <a href="/open-source/" class="link-arrow">All tools<span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>

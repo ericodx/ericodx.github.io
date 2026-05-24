@@ -1,33 +1,19 @@
 ---
-import BaseHead from '../../components/BaseHead.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
+import Page from '../../layouts/Page.astro';
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead title="Message sent" description="Your message has been sent" />
-  </head>
-  <body>
-    <Header />
-    <main>
-      <section class="section-hero">
-        <div class="wrap">
-          <div class="stack-32">
-            <div class="stack-16">
-              <h1 class="h-display">Message sent</h1>
-              <p class="v-p300 text-text-t900 sm:max-w-[830px]">
-                Thanks for reaching out — I’ll get back to you soon.
-              </p>
-            </div>
-            <a href="/" class="link-arrow self-start"
-              ><span aria-hidden="true">←</span> Back to home</a
-            >
-          </div>
+<Page title="Message sent" description="Your message has been sent">
+  <section class="section-hero">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-16">
+          <h1 class="h-display">Message sent</h1>
+          <p class="v-p300 text-text-t900 sm:max-w-[830px]">
+            Thanks for reaching out — I’ll get back to you soon.
+          </p>
         </div>
-      </section>
-    </main>
-    <Footer />
-  </body>
-</html>
+        <a href="/" class="link-arrow self-start"><span aria-hidden="true">←</span> Back to home</a>
+      </div>
+    </div>
+  </section>
+</Page>

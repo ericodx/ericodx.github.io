@@ -1,7 +1,6 @@
 ---
-import BaseHead from '../../components/BaseHead.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import Page from '../../layouts/Page.astro';
 
 const tools = [
   {
@@ -25,44 +24,20 @@ const tools = [
 ];
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead title="Open Source" description="Open source developer tools for Apple platforms" />
-  </head>
-  <body>
-    <Header />
-    <main>
-      <section
-        class="section-padding-x relative z-3 overflow-hidden bg-background-bg100 lg:pt-[240px] pb-10 pt-25 md:pb-15"
-      >
-        <div class="m-auto w-full xl:max-w-[1408px]">
-          <div class="flex flex-col gap-7">
-            <div class="flex flex-col gap-3">
-              <div class="v-h900n tracking-[-2px] text-text-t900 md:max-w-none lg:tracking-[-3px]">
-                <h1>Open Source</h1>
-              </div>
-              <div class="v-p300 text-text-t900 sm:max-w-[830px]">
-                <p>
-                  Developer tools I build to keep Swift codebases honest. All MIT-licensed,
-                  distributed through my own Homebrew tap.
-                </p>
-              </div>
-            </div>
-            <div class="cards-grid">
-              {
-                tools.map((t) => (
-                  <a href={`/open-source/${t.slug}/`} class="card">
-                    <span class="card__title card__title--mono">{t.name}</span>
-                    <span class="card__body">{t.description}</span>
-                  </a>
-                ))
-              }
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-    <Footer />
-  </body>
-</html>
+<Page title="Open Source" description="Open source developer tools for Apple platforms">
+  <PageHero
+    title="Open Source"
+    lead="Developer tools I build to keep Swift codebases honest. All MIT-licensed, distributed through my own Homebrew tap."
+  >
+    <div class="cards-grid">
+      {
+        tools.map((t) => (
+          <a href={`/open-source/${t.slug}/`} class="card">
+            <span class="card__title card__title--mono">{t.name}</span>
+            <span class="card__body">{t.description}</span>
+          </a>
+        ))
+      }
+    </div>
+  </PageHero>
+</Page>

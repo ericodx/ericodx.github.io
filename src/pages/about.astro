@@ -1,104 +1,90 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import Page from '../layouts/Page.astro';
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead title="About" description="About Érico Perez Neto" />
-  </head>
-  <body>
-    <Header />
-    <main>
-      <section class="section-hero">
-        <div class="wrap">
-          <div class="stack-32">
-            <h1 class="h-display">About</h1>
+<Page title="About" description="About Érico Perez Neto">
+  <section class="section-hero">
+    <div class="wrap">
+      <div class="stack-32">
+        <h1 class="h-display">About</h1>
 
-            <div class="stack-16">
-              <span class="label">Background</span>
-              <div class="content-width stack-16">
-                <p class="v-p300 text-text-t900">
-                  I’m Érico, a Staff Engineer based in São Paulo. I’ve been writing software for 30
-                  years, with the last 16 dedicated to Apple platforms — primarily iOS apps in
-                  environments where stability isn’t optional (banking, payments, fintech), reaching
-                  tens of millions of users. More recently I’ve also been contributing to open
-                  source, writing command-line tools for Swift codebases — available for macOS and
-                  Linux.
-                </p>
-                <p class="v-p300 text-text-t900">
-                  That work made me serious about the small stuff — test discipline, code
-                  organization, the habit of catching weak assertions before they ship. The <a
-                    href="/open-source/"
-                    class="link-inline">open source CLIs</a
-                  > you’ll find here grew out of problems I kept running into: measuring test effectiveness
-                  honestly, surfacing structural duplication, and enforcing a predictable shape for Swift
-                  types.
-                </p>
-                <p class="v-p300 text-text-t900">
-                  Most of my work has been at Staff and Principal levels at companies like Itaú
-                  Rede, Creditas, ThoughtWorks, and PagSeguro. At Rede in particular, alongside
-                  mobile architecture, I designed the backend contracts and integrations that mobile
-                  clients depend on — work that made me think about the API and the device as one
-                  system, not two.
-                </p>
-                <p class="v-p300 text-text-t900">
-                  This site is where I share what I build and write about what I learn along the
-                  way.
-                </p>
-              </div>
-            </div>
-
-            <div class="stack-16">
-              <span class="label">Skills</span>
-              <div class="chip-list">
-                <span class="chip">Swift</span>
-                <span class="chip">SwiftUI</span>
-                <span class="chip">UIKit</span>
-                <span class="chip">Objective-C</span>
-                <span class="chip">Go</span>
-                <span class="chip">Swift Concurrency</span>
-                <span class="chip">iOS</span>
-                <span class="chip">macOS</span>
-                <span class="chip">Multi-platform CLIs</span>
-                <span class="chip">Clean Architecture</span>
-                <span class="chip">Modularization</span>
-                <span class="chip">MVVM</span>
-                <span class="chip">Design System</span>
-                <span class="chip">Server-Driven UI</span>
-                <span class="chip">XCTest</span>
-                <span class="chip">Swift Testing</span>
-                <span class="chip">Mutation Testing</span>
-                <span class="chip">Snapshot Testing</span>
-                <span class="chip">TDD</span>
-                <span class="chip">REST</span>
-                <span class="chip">GraphQL</span>
-                <span class="chip">Distributed Systems</span>
-                <span class="chip">Event-driven Architecture</span>
-                <span class="chip">Xcode</span>
-                <span class="chip">SPM</span>
-                <span class="chip">GitHub Actions</span>
-                <span class="chip">Fastlane</span>
-                <span class="chip">Datadog</span>
-                <span class="chip">Firebase</span>
-                <span class="chip">Claude</span>
-                <span class="chip">Claude Code</span>
-                <span class="chip">MCP</span>
-                <span class="chip">Prompt Engineering</span>
-                <span class="chip">RAG</span>
-                <span class="chip">AI Agents</span>
-              </div>
-            </div>
-
-            <a href="/contact/" class="link-arrow self-start"
-              >Get in touch <span aria-hidden="true">→</span></a
-            >
+        <div class="stack-16">
+          <span class="label">Background</span>
+          <div class="content-width stack-16">
+            <p class="v-p300 text-text-t900">
+              I’m Érico, a Staff Engineer based in São Paulo. I’ve been writing software for 30
+              years, with the last 16 dedicated to Apple platforms — primarily iOS apps in
+              environments where stability isn’t optional (banking, payments, fintech), reaching
+              tens of millions of users. More recently I’ve also been contributing to open source,
+              writing command-line tools for Swift codebases — available for macOS and Linux.
+            </p>
+            <p class="v-p300 text-text-t900">
+              That work made me serious about the small stuff — test discipline, code organization,
+              the habit of catching weak assertions before they ship. The <a
+                href="/open-source/"
+                class="link-inline">open source CLIs</a
+              > you’ll find here grew out of problems I kept running into: measuring test effectiveness
+              honestly, surfacing structural duplication, and enforcing a predictable shape for Swift
+              types.
+            </p>
+            <p class="v-p300 text-text-t900">
+              Most of my work has been at Staff and Principal levels at companies like Itaú Rede,
+              Creditas, ThoughtWorks, and PagSeguro. At Rede in particular, alongside mobile
+              architecture, I designed the backend contracts and integrations that mobile clients
+              depend on — work that made me think about the API and the device as one system, not
+              two.
+            </p>
+            <p class="v-p300 text-text-t900">
+              This site is where I share what I build and write about what I learn along the way.
+            </p>
           </div>
         </div>
-      </section>
-    </main>
-    <Footer />
-  </body>
-</html>
+
+        <div class="stack-16">
+          <span class="label">Skills</span>
+          <div class="chip-list">
+            <span class="chip">Swift</span>
+            <span class="chip">SwiftUI</span>
+            <span class="chip">UIKit</span>
+            <span class="chip">Objective-C</span>
+            <span class="chip">Go</span>
+            <span class="chip">Swift Concurrency</span>
+            <span class="chip">iOS</span>
+            <span class="chip">macOS</span>
+            <span class="chip">Multi-platform CLIs</span>
+            <span class="chip">Clean Architecture</span>
+            <span class="chip">Modularization</span>
+            <span class="chip">MVVM</span>
+            <span class="chip">Design System</span>
+            <span class="chip">Server-Driven UI</span>
+            <span class="chip">XCTest</span>
+            <span class="chip">Swift Testing</span>
+            <span class="chip">Mutation Testing</span>
+            <span class="chip">Snapshot Testing</span>
+            <span class="chip">TDD</span>
+            <span class="chip">REST</span>
+            <span class="chip">GraphQL</span>
+            <span class="chip">Distributed Systems</span>
+            <span class="chip">Event-driven Architecture</span>
+            <span class="chip">Xcode</span>
+            <span class="chip">SPM</span>
+            <span class="chip">GitHub Actions</span>
+            <span class="chip">Fastlane</span>
+            <span class="chip">Datadog</span>
+            <span class="chip">Firebase</span>
+            <span class="chip">Claude</span>
+            <span class="chip">Claude Code</span>
+            <span class="chip">MCP</span>
+            <span class="chip">Prompt Engineering</span>
+            <span class="chip">RAG</span>
+            <span class="chip">AI Agents</span>
+          </div>
+        </div>
+
+        <a href="/contact/" class="link-arrow self-start"
+          >Get in touch <span aria-hidden="true">→</span></a
+        >
+      </div>
+    </div>
+  </section>
+</Page>
