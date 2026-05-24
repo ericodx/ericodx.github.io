@@ -1,0 +1,23 @@
+@import 'tailwindcss';
+
+/* Match the .dark class strategy used by the legacy Shakuro CSS */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Breakpoints (matching the legacy responsive design) */
+  --breakpoint-xs: 648px;
+  --breakpoint-sm: 768px;
+  --breakpoint-md: 1024px;
+  --breakpoint-lg: 1280px;
+  --breakpoint-xl: 1729px;
+
+  /* Spacing scale base unit: 1 unit = 8px (2× Tailwind default) */
+  --spacing: 8px;
+
+  /* Brand color tokens used in markup */
+  --color-background-bg100: rgb(255 255 255);
+  --color-text-t900: rgb(19 22 35);
+
+  /* Custom z-index values referenced in markup */
+  --z-index-3: 3;
+}
