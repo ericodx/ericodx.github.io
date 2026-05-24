@@ -2,6 +2,7 @@
 title: 'You Have to Earn the Right to Go Fast'
 description: 'How a missing .sorted taught me that concurrency correctness and performance are separate problems.'
 pubDate: 2025-12-27
+tags: ['Concurrency', 'Performance']
 ---
 
 _How a missing `.sorted` taught me that concurrency correctness and performance are separate problems._

@@ -2,6 +2,7 @@
 title: 'Duplicate Code Isn’t the Problem — Late Feedback Is'
 description: 'Most teams already have duplication tools. The problem is when they speak.'
 pubDate: 2025-11-01
+tags: ['Code Quality']
 ---
 
 Most teams already have duplication tools. The problem is when they speak.

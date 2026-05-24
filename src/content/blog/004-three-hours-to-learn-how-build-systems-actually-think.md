@@ -2,6 +2,7 @@
 title: 'Three Hours to Learn How Build Systems Actually Think'
 description: 'What fighting the Xcode sandbox taught me about contracts, trust, and pragmatism.'
 pubDate: 2025-12-13
+tags: ['Build Systems', 'Xcode']
 ---
 
 _What fighting the Xcode sandbox taught me about contracts, trust, and pragmatism._

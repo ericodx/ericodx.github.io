@@ -2,6 +2,7 @@
 title: "Continuations Don't Respond to Cancellation"
 description: 'How a glance at Activity Monitor revealed that withCheckedThrowingContinuation ignores task cancellation — and why external resources always need...'
 pubDate: 2026-04-04
+tags: ['Concurrency', 'Swift']
 ---
 
 _How a glance at Activity Monitor revealed that `withCheckedThrowingContinuation` ignores task cancellation — and why external resources always need `withTaskCancellationHandler`._

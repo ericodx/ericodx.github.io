@@ -2,6 +2,7 @@
 title: 'Configured Concurrency Is Not Real Concurrency'
 description: 'From discovering that parallel tasks were secretly queued to diagnosing four layers of non-determinism in Xcode simulator execution — and the architectural...'
 pubDate: 2026-03-21
+tags: ['Concurrency', 'Xcode', 'Testing']
 ---
 
 _From discovering that parallel tasks were secretly queued to diagnosing four layers of non-determinism in Xcode simulator execution — and the architectural redesign that made mutation testing results reproducible._

@@ -2,6 +2,7 @@
 title: 'Code Organization Isn’t Style — It’s Governance'
 description: 'Why I built a tool to automate structural conventions — and why the organizational problem was harder than the technical one.'
 pubDate: 2025-11-15
+tags: ['Code Quality']
 ---
 
 _Why I built a tool to automate structural conventions — and why the organizational problem was harder than the technical one._

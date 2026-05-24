@@ -2,6 +2,7 @@
 title: 'The Best Error Handling Is Not Generating the Error'
 description: 'From timeouts and retries to filters and separation — two cases where preventing the problem replaced handling it'
 pubDate: 2026-05-02
+tags: ['Error Handling']
 ---
 
 _From timeouts and retries to filters and separation — two cases where preventing the problem replaced handling it_

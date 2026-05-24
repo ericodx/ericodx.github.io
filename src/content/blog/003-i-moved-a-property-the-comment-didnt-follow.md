@@ -2,6 +2,7 @@
 title: 'I Moved a Property. The Comment Didn’t Follow.'
 description: 'I moved a property three positions down in a Swift struct. The comment above it ended up attached to a completely different method. The code compiled. The...'
 pubDate: 2025-11-29
+tags: ['Swift', 'Code Quality']
 ---
 
 I moved a property three positions down in a Swift struct. The comment above it ended up attached to a completely different method. The code compiled. The tests passed. And if I hadn't caught it manually, it would have silently corrupted documentation across hundreds of files in a real codebase.
