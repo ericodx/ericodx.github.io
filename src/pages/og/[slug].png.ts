@@ -16,7 +16,10 @@ const fontBold = await fs.readFile(
 );
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => import.meta.env.DEV || !data.draft);
+  const posts = await getCollection(
+    'blog',
+    ({ data }) => import.meta.env.DEV || (!data.draft && data.pubDate <= new Date()),
+  );
   return posts.map((post) => ({
     params: { slug: post.id },
     props: { post },

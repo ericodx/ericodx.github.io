@@ -6,7 +6,10 @@ import PageHero from '../../../components/PageHero.astro';
 import Page from '../../../layouts/Page.astro';
 
 export const getStaticPaths = (async () => {
-  const posts = await getCollection('blog', ({ data }) => import.meta.env.DEV || !data.draft);
+  const posts = await getCollection(
+    'blog',
+    ({ data }) => import.meta.env.DEV || (!data.draft && data.pubDate <= new Date()),
+  );
   const tagSet = new Set<string>();
   for (const post of posts) {
     for (const tag of post.data.tags) {

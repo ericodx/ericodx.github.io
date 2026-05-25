@@ -7,7 +7,10 @@ import Page from '../../layouts/Page.astro';
 
 export const getStaticPaths = (async ({ paginate }) => {
   const posts = (
-    await getCollection('blog', ({ data }) => import.meta.env.DEV || !data.draft)
+    await getCollection(
+      'blog',
+      ({ data }) => import.meta.env.DEV || (!data.draft && data.pubDate <= new Date()),
+    )
   ).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
   return paginate(posts, { pageSize: 9 });
 }) satisfies GetStaticPaths;
