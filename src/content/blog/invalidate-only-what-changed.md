@@ -1,7 +1,7 @@
 ---
 title: 'Invalidate Only What Changed'
 description: 'How granular per-file test hashing and killer-test-aware cache invalidation turned mutation testing from a nightly batch job into an interactive tool.'
-pubDate: 2026-03-07
+pubDate: 2026-08-03
 tags: ['Mutation Testing', 'Performance']
 ---
 

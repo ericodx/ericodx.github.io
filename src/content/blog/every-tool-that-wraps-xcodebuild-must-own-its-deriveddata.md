@@ -1,7 +1,7 @@
 ---
 title: 'Every Tool That Wraps xcodebuild Must Own Its DerivedData'
 description: 'From an 8 GB surprise to a deterministic 40.6% mutation score: six lessons I learned by stabilizing an Xcode mutation testing pipeline.'
-pubDate: 2026-04-18
+pubDate: 2026-08-24
 tags: ['Xcode', 'Build Systems']
 ---
 
