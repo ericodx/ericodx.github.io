@@ -6,7 +6,4 @@ useDefault = true
 
 [allowlist]
 description = "Cloudflare Web Analytics site token — intentionally public, embedded in HTML beacon"
-regexTarget = "match"
-regexes = [
-  '''data-cf-beacon='\{"token": "[a-f0-9]{32}"\}'''
-]
+stopwords = ["e01cf933f7134dd89bfcec47eeed8302"]
