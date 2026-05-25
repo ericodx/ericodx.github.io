@@ -29,6 +29,7 @@ export const GET: APIRoute = async ({ props }) => {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    timeZone: 'UTC',
   });
 
   const svg = await satori(
