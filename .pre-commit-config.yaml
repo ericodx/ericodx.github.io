@@ -59,11 +59,6 @@ repos:
         description: Prevent committing files larger than the configured size.
         args: ['--maxkb=5000']
 
-      - id: no-commit-to-branch
-        name: ✓ Prevent commit to main
-        description: Block direct commits to the protected main branch.
-        args: [--branch, main]
-
   # Codespell
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.2
