@@ -25,3 +25,6 @@ api.txt
 
 # jetbrains setting folder
 .idea/
+
+# project notes
+notes/
