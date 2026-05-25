@@ -11,7 +11,7 @@ Live at <https://ericodx.io>.
 - [pre-commit](https://pre-commit.com/) hooks (Conventional Commits, gitleaks, codespell, line endings, secrets, large files)
 - Hosted on [GitHub Pages](https://pages.github.com/), deployed via GitHub Actions
 
-## Development
+## Up and running
 
 Requires Node 24 (see `.nvmrc`).
 
@@ -29,19 +29,3 @@ Install pre-commit hooks once:
 brew install pre-commit
 pre-commit install
 ```
-
-## Workflow
-
-Feature branches + PR. Direct commits to `main` are blocked by the `no-commit-to-branch` hook. Commits follow Conventional Commits format, single-line, no body, no `Co-Authored-By`.
-
-## Content
-
-Posts live in `src/content/blog/*.md` (or `.mdx`). Add `draft: true` in frontmatter to hide a post from production builds; it stays visible in `npm run dev`.
-
-## Deploy
-
-Pushes to `main` trigger `.github/workflows/deploy.yml`, which builds with `withastro/action@v3` and publishes via `actions/deploy-pages@v4`. Pages source must be set to **GitHub Actions** in the repository settings.
-
-## License
-
-Proprietary — see [LICENSE](./LICENSE). Source code and written content are © 2026 Érico Perez Neto. All rights reserved.
