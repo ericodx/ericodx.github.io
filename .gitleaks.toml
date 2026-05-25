@@ -1,0 +1,12 @@
+# Extends the default gitleaks rules and adds allowlist entries
+# for tokens that are intentionally public (e.g. analytics beacons).
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Cloudflare Web Analytics site token — intentionally public, embedded in HTML beacon"
+regexTarget = "match"
+regexes = [
+  '''data-cf-beacon='\{"token": "[a-f0-9]{32}"\}'''
+]
