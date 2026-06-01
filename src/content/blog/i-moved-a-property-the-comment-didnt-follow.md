@@ -348,4 +348,6 @@ The full source code is available at **[github.com/ericodx/swift-marshal](https:
 
 ---
 
-_This article is part of a series on building Swift Marshal. The first article covers the governance problem the tool solves._
+_Part of a series on building Swift Marshal — the [first article](/blog/code-organization-isnt-style-its-governance/) covers the governance problem the tool solves._
+
+_swift-marshal is open source at [github.com/ericodx/swift-marshal](https://github.com/ericodx/swift-marshal)._
