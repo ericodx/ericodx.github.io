@@ -8,12 +8,13 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { SITE_TITLE } from '../../consts';
 
-const fontRegular = await fs.readFile(
-  path.resolve(process.cwd(), 'src/assets/og/iAWriterQuattroS-Regular.ttf'),
-);
-const fontBold = await fs.readFile(
-  path.resolve(process.cwd(), 'src/assets/og/iAWriterQuattroS-Bold.ttf'),
-);
+async function loadFont(relPath: string): Promise<ArrayBuffer> {
+  const buf = await fs.readFile(path.resolve(process.cwd(), relPath));
+  return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+}
+
+const fontRegular = await loadFont('src/assets/og/iAWriterQuattroS-Regular.ttf');
+const fontBold = await loadFont('src/assets/og/iAWriterQuattroS-Bold.ttf');
 
 export async function getStaticPaths() {
   const posts = await getCollection(
