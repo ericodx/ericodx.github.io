@@ -216,8 +216,8 @@ Swift 6 strict concurrency accelerates all of this. When `Sendable` is a compile
 
 I think about that pressure now when I reach for any shared state: can the type system own this invariant instead of a test? The answer is usually yes, and it's usually simpler than I expect.
 
-The code is open source at **[github.com/ericodx/swift-cpd](https://github.com/ericodx/swift-cpd)**.
-
 ---
 
 _Benchmarks measured on Apple Silicon M4 Max (arm64), macOS 26, Swift 6.2. All measurements taken with 50 files containing ~274 tokens each._
+
+_swift-cpd is open source at [github.com/ericodx/swift-cpd](https://github.com/ericodx/swift-cpd)._
