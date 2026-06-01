@@ -521,4 +521,4 @@ That's how tools evolve.
 
 ---
 
-_The code is available at [github.com/ericodx/swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing). The `--fast` flag activates schemata mode._
+_swift-mutation-testing is open source at [github.com/ericodx/swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing)._

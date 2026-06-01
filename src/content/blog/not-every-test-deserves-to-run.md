@@ -248,4 +248,4 @@ This one answered what it set out to answer.
 
 ---
 
-_The full source code is available at [github.com/ericodx/swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing). The fixture project is included — you can run it locally with `swift run` and see the comparison yourself._
+_swift-mutation-testing is open source at [github.com/ericodx/swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing)._

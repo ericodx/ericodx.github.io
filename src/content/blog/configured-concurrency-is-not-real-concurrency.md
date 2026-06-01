@@ -483,4 +483,4 @@ Sometimes the most important work is not adding code. It is discovering why the 
 
 ---
 
-_This article describes the analysis and redesign of the Xcode+XCTest executor in the [Swift Mutation Testing](https://github.com/ericodx/swift-mutation-testing) project. The code is Swift 6 with strict concurrency enabled._
+_swift-mutation-testing is open source at [github.com/ericodx/swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing)._

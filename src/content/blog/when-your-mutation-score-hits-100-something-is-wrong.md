@@ -302,4 +302,4 @@ When your mutation testing shows you 100%, be suspicious. And after you fix the 
 
 ---
 
-_This article was written during the development of [swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing), a mutation testing tool for Swift 6 projects._
+_swift-mutation-testing is open source at [github.com/ericodx/swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing)._

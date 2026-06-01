@@ -72,4 +72,4 @@ If your team debates structure in code reviews, that's the signal. The debate it
 
 ---
 
-_swift-marshal is open source at [github.com/ericodx/swift-marshal](https://github.com/ericodx/swift-marshal)_
+_swift-marshal is open source at [github.com/ericodx/swift-marshal](https://github.com/ericodx/swift-marshal)._

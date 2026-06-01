@@ -248,4 +248,4 @@ This turns mutation testing from a nightly batch job into an interactive develop
 
 ---
 
-_The code is available at [github.com/ericodx/swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing)._
+_swift-mutation-testing is open source at [github.com/ericodx/swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing)._

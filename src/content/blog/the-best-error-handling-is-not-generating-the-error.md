@@ -305,4 +305,4 @@ The timeout still exists. The process management still handles edge cases. But t
 
 ---
 
-Source code: [github.com/ericodx/swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing)
+_swift-mutation-testing is open source at [github.com/ericodx/swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing)._

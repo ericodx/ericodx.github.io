@@ -200,4 +200,4 @@ Sometimes the simplest bug to fix is the hardest to find — not because the cod
 
 ---
 
-_The complete `ProcessLauncher` code and the process group cleanup milestone are available in the [project repository](https://github.com/ericodx/swift-mutation-testing)._
+_swift-mutation-testing is open source at [github.com/ericodx/swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing)._

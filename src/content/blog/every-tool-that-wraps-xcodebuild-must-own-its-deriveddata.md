@@ -423,4 +423,4 @@ The best way to learn is to build, execute, observe what happens, and ask: what 
 
 ---
 
-_[swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing) is an open-source mutation testing tool for Swift 6, implementing the Schemata approach for SPM and Xcode projects._
+_swift-mutation-testing is open source at [github.com/ericodx/swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing)._

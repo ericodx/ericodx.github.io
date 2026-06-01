@@ -130,4 +130,4 @@ Three hours for 60 lines of code. A terrible ratio if you measure productivity i
 
 ---
 
-_The full source code is available at [github.com/ericodx/swift-marshal](https://github.com/ericodx/swift-marshal/tree/main/Plugins)_
+_swift-marshal is open source at [github.com/ericodx/swift-marshal](https://github.com/ericodx/swift-marshal)._

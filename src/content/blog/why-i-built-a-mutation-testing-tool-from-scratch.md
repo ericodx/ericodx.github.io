@@ -429,4 +429,4 @@ The tool is still far from fast enough for large projects. But it is correct. An
 
 ---
 
-_The code is available at [github.com/ericodx/swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing). The project follows Swift 6 strict concurrency and requires Xcode 16+ or Swift 6.x toolchain._
+_swift-mutation-testing is open source at [github.com/ericodx/swift-mutation-testing](https://github.com/ericodx/swift-mutation-testing)._
