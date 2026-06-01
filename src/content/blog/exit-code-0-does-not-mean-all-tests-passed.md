@@ -1,7 +1,7 @@
 ---
 title: 'Exit Code 0 Does Not Mean All Tests Passed'
 description: 'How XCTest and Swift Testing produce different mutation scores from the same code — and why the difference is about error propagation, not test quality.'
-pubDate: 2026-09-07
+pubDate: 2027-01-04
 tags: ['Testing', 'Mutation Testing']
 ---
 

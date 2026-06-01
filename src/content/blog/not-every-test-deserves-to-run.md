@@ -1,7 +1,7 @@
 ---
 title: 'Not Every Test Deserves to Run'
 description: "How a static call graph turned 30,000 test executions into 6,000 — and what it can't catch."
-pubDate: 2026-07-13
+pubDate: 2026-09-07
 tags: ['Testing', 'Performance']
 ---
 
