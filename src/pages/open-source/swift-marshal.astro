@@ -1,142 +1,305 @@
 ---
+import RelatedPosts from '../../components/RelatedPosts.astro';
 import ToolHero from '../../components/ToolHero.astro';
 import Page from '../../layouts/Page.astro';
 
+const repo = 'https://github.com/ericodx/swift-marshal';
+const docsBase = `${repo}/blob/main/Docs`;
+
 const beforeCode = `struct UserSession {
-    // MARK: - Instance methods
+    typealias ID = UUID
+
     func refresh() async throws {
-        let snapshot = try await api.fetch(id: userId)
-        applyUpdate(snapshot)
+        let snapshot = try await api.fetch(id: id)
+        apply(snapshot)
     }
 
-    private func applyUpdate(_ snapshot: UserSnapshot) {
-        firstName = snapshot.firstName
-        lastName = snapshot.lastName
-    }
+    /// The signed-in user's display name.
+    var name: String
 
-    // MARK: - Instance properties
-    var firstName: String
-    var lastName: String
-
-    // MARK: - Subtypes
     enum State {
         case active, expired, revoked
     }
 
+    static let anonymous = UserSession(id: ID(), api: .stub)
+
+    private func apply(_ snapshot: Snapshot) {
+        name = snapshot.name
+    }
+
+    /// Backing service for remote calls.
     private let api: UserAPI
+    let id: ID
 
-    // MARK: - Typealiases
-    typealias UserID = UUID
-    let userId: UserID
-
-    // MARK: - Type properties
-    static let anonymous = UserSession(userId: UUID(), api: .stub)
-
-    // MARK: - Initializers
-    init(userId: UserID, api: UserAPI) {
-        self.userId = userId
+    init(id: ID, api: UserAPI) {
+        self.id = id
         self.api = api
     }
 
-    // MARK: - Type methods
     static func current() -> UserSession {
         anonymous
     }
 }`;
 
 const afterCode = `struct UserSession {
-    // MARK: - Typealiases
-    typealias UserID = UUID
+    typealias ID = UUID
 
-    // MARK: - Initializers
-    init(userId: UserID, api: UserAPI) {
-        self.userId = userId
+    init(id: ID, api: UserAPI) {
+        self.id = id
         self.api = api
     }
 
-    // MARK: - Type properties
-    static let anonymous = UserSession(userId: UUID(), api: .stub)
+    static let anonymous = UserSession(id: ID(), api: .stub)
 
-    // MARK: - Instance properties
-    var firstName: String
-    var lastName: String
+    /// The signed-in user's display name.
+    var name: String
+
+    /// Backing service for remote calls.
     private let api: UserAPI
-    let userId: UserID
+    let id: ID
 
-    // MARK: - Subtypes
     enum State {
         case active, expired, revoked
     }
 
-    // MARK: - Type methods
     static func current() -> UserSession {
         anonymous
     }
 
-    // MARK: - Instance methods
     func refresh() async throws {
-        let snapshot = try await api.fetch(id: userId)
-        applyUpdate(snapshot)
+        let snapshot = try await api.fetch(id: id)
+        apply(snapshot)
     }
 
-    private func applyUpdate(_ snapshot: UserSnapshot) {
-        firstName = snapshot.firstName
-        lastName = snapshot.lastName
+    private func apply(_ snapshot: Snapshot) {
+        name = snapshot.name
     }
 }`;
 
+const stats = [
+  { value: '10', label: 'member kinds, ordered by one YAML list' },
+  { value: '5', label: 'type kinds: struct, class, enum, actor, protocol' },
+  { value: '2', label: 'modes: check reports, fix rewrites' },
+  { value: '0', label: 'dependencies to add to your project' },
+];
+
+const config = `# .swift-marshal.yaml — the default written by init
+version: 1
+
+ordering:
+  members:
+    - typealias
+    - associatedtype
+    - initializer
+    - type_property
+    - instance_property
+    - subtype
+    - type_method
+    - instance_method
+    - subscript
+    - deinitializer`;
+
+const complexRules = `ordering:
+  members:
+    - initializer
+    - property:
+        visibility: public
+    - property:
+        annotated: true
+    - instance_property
+    - method:
+        kind: static
+    - instance_method`;
+
+const steps = [
+  {
+    title: 'Parse',
+    body: 'SwiftSyntax builds the real syntax tree of every file — no regular expressions over source text. Files are processed concurrently.',
+  },
+  {
+    title: 'Classify',
+    body: 'Every struct, class, enum, actor and protocol is found, at any nesting depth, and each member gets a kind and a visibility.',
+  },
+  {
+    title: 'Plan',
+    body: 'Each member goes to the first rule in your config that matches it. The sort is stable: members of the same kind keep the order you wrote them in.',
+  },
+  {
+    title: 'Report or rewrite',
+    body: 'check prints the current and target order of every type that is out of place. fix moves the syntax nodes themselves and writes the file back.',
+  },
+];
+
+const safety = [
+  {
+    title: 'Look before you write',
+    body: 'check never touches a file. fix --dry-run names every file that would change and exits 1, so CI can ask for a fix without making one.',
+  },
+  {
+    title: 'Same-kind order is kept',
+    body: 'Stored properties stay in the order you wrote them, so the memberwise initializer Swift synthesizes from them keeps its parameters.',
+  },
+  {
+    title: 'Declarations move whole',
+    body: 'A member moves as one syntax node, attributes and body together. Enum cases, and anything else it does not classify, stay exactly where they are.',
+  },
+  {
+    title: 'Done means done',
+    body: 'Run check after fix and every type reports [order ok]. The rewrite and the rules agree, so CI stays green after the fix lands.',
+  },
+];
+
+const ciCommands = `# Fail the job when a type is out of order
+swift-marshal check --path Sources/
+
+# Ask pull requests to run fix, without changing anything in CI
+swift-marshal fix --dry-run --path Sources/`;
+
+const dryRunOutput = `Would reorder: Sources/App/UserSession.swift
+⚠ 1 file would be modified`;
+
+const ciFeatures = [
+  {
+    title: 'Clear exit codes',
+    body: '0 when every type is in order, 1 for violations or pending changes, 2 for real errors — so a broken path never looks like a style problem.',
+  },
+  {
+    title: 'pre-commit hook',
+    body: 'Block a commit that introduces a type out of order, before it reaches review. Setup is a few lines in .pre-commit-config.yaml.',
+  },
+  {
+    title: 'Warn before you enforce',
+    body: '--warn-only reports violations and exits 0, for the weeks while a codebase is being brought in line.',
+  },
+  {
+    title: 'One config, many rules',
+    body: 'Point --config at a stricter file for CI than the one developers use locally, or keep one per package in a monorepo.',
+  },
+];
+
+const quickStart = `# Detects Package.swift or .xcodeproj and writes .swift-marshal.yaml
+swift-marshal init
+
+# See what is out of order
+swift-marshal check
+
+# Fix it
+swift-marshal fix`;
+
+const checkOutput = `Sources/App/UserSession.swift:
+  structType UserSession (line 1)
+    [needs reordering]
+    original:
+      - typealias ID
+      - instance_method refresh
+      - instance_property name
+      - subtype State
+      - type_property anonymous
+      - instance_method apply
+      - instance_property api
+      - instance_property id
+      - initializer init
+      - type_method current
+    reordered:
+      - typealias ID
+      - initializer init
+      - type_property anonymous
+      - instance_property name
+      - instance_property api
+      - instance_property id
+      - subtype State
+      - type_method current
+      - instance_method refresh
+      - instance_method apply
+  enumType State (line 12)
+    (no members)
+
+Summary: 2 types, 1 need reordering
+
+✗ 1 type in 1 file needs reordering
+  Run 'swift-marshal fix' to apply changes`;
+
+const commandPlugin = `# Fix every target in the package
+swift package marshal
+
+# Or just one
+swift package marshal --target MyTarget`;
+
+const xcodeOutput = `Sources/App/UserSession.swift:1: warning: 'UserSession' members need reordering`;
+
 const features = [
   {
-    title: 'Automated fixes',
-    body: 'Detect issues with check, apply fixes with fix. Same engine, different intent.',
+    title: 'init that knows your project',
+    body: 'Package.swift sets paths to Sources/, an .xcodeproj to your app folder. Edit the file only if you want to.',
   },
   {
-    title: 'CI-ready, config-driven',
-    body: 'A small YAML in your repo describes the shape. The CLI does the rest.',
+    title: 'Quiet and Xcode output',
+    body: '--quiet prints only the files that need work; --xcode prints one warning per type for build phases.',
   },
   {
-    title: 'AST-based analysis',
-    body: 'Powered by SwiftSyntax — parses the real syntax tree instead of regexing source.',
-  },
-  {
-    title: 'Preserves logic and formatting',
-    body: 'Only reorders declarations. Whitespace, comments, and behavior stay untouched.',
+    title: 'Files or folders',
+    body: 'Check one file, a list of files, a folder with --path, or the paths in your config — whichever the moment needs.',
   },
 ];
 
 const docs = [
   {
     name: 'Installation',
-    desc: 'Homebrew, binary, source, pre-commit, Xcode plugin',
-    href: 'https://github.com/ericodx/swift-marshal/blob/main/Docs/INSTALLATION.md',
+    desc: 'Homebrew, pre-built binary, build from source, pre-commit hook, Xcode plugin',
+    href: `${docsBase}/INSTALLATION.md`,
   },
   {
     name: 'Usage & Configuration',
-    desc: 'CLI options, YAML reference, output formats, CI',
-    href: 'https://github.com/ericodx/swift-marshal/blob/main/Docs/USAGE.md',
+    desc: 'CLI options, YAML reference, output formats, CI recipes, exit codes',
+    href: `${docsBase}/USAGE.md`,
   },
   {
     name: 'Architecture',
-    desc: 'Module map, pipeline design, AST rewriting',
-    href: 'https://github.com/ericodx/swift-marshal/blob/main/Docs/Architecture/README.md',
+    desc: 'Module map, pipeline design, configuration model, AST rewriting',
+    href: `${docsBase}/Architecture/README.md`,
   },
   {
-    name: 'Codebase reference',
+    name: 'Codebase Reference',
     desc: 'Every type, protocol, and stage documented',
-    href: 'https://github.com/ericodx/swift-marshal/blob/main/Docs/CodeBase/README.md',
+    href: `${docsBase}/CodeBase/README.md`,
+  },
+  {
+    name: 'Building',
+    desc: 'Prerequisites, building from source, running tests, local install',
+    href: `${repo}/blob/main/BUILDING.md`,
+  },
+  {
+    name: 'Contributing',
+    desc: 'Technical principles, code style, and workflow',
+    href: `${repo}/blob/main/CONTRIBUTING.md`,
   },
 ];
 ---
 
 <Page
   title="Swift Marshal"
-  description="Ensure consistent member ordering in Swift types to improve readability and maintainability."
+  description="Consistent member ordering for Swift types. Checks and fixes the order of declarations from a small YAML config — locally, in Xcode, and in CI."
 >
   <ToolHero
     slug="swift-marshal"
     title="Swift Marshal"
-    lead="Inconsistent member ordering quietly compounds across a codebase. It increases cognitive load when navigating files, adds friction during code reviews, and creates needless inconsistency across teams. Swift Marshal makes that shape predictable — so reading code gets faster and reviews focus on what actually matters."
+    lead="Every Swift type tells its story in some order. When each one picks its own, every file becomes a small search and every review has an opinion on where the new property goes. swift-marshal makes the order a rule: written once in a small YAML file, checked in CI, and fixed with one command."
   />
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stat-grid">
+        {
+          stats.map((s) => (
+            <div class="stat">
+              <span class="stat__value">{s.value}</span>
+              <span class="stat__label">{s.label}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
 
   <section class="section-divider">
     <div class="wrap">
@@ -144,8 +307,13 @@ const docs = [
         <div class="stack-12 content-width">
           <h2 class="h-section">Before &amp; after</h2>
           <p class="v-p300 text-text-t900">
-            Same type, two arrangements. The default ordering puts initializers and type-level state
-            first, instance state next, and behavior at the bottom.
+            The same type, as written and after <code class="inline-code">swift-marshal fix</code>.
+            Initializers and type-level state come first, instance state next, behavior last. The
+            doc comments on <code class="inline-code">name</code> and <code class="inline-code"
+              >api</code
+            > moved with them, and <code class="inline-code">name</code>, <code class="inline-code"
+              >api</code
+            > and <code class="inline-code">id</code> keep their order among themselves.
           </p>
         </div>
         <div class="cards-grid cards-grid--wide">
@@ -158,23 +326,92 @@ const docs = [
             <pre class="code-block">{afterCode}</pre>
           </div>
         </div>
-        <div class="content-width stack-16">
+        <p class="v-p300 text-text-t900 content-width">
+          Once every type follows the same order, reading a file becomes orientation rather than
+          discovery: what a type requires, what it holds, what it does. Reviews stop debating where
+          a declaration belongs, and two people adding members to the same type land them in
+          predictable places.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Your order, written down</h2>
           <p class="v-p300 text-text-t900">
-            Swift Marshal parses your source with SwiftSyntax, finds every type declaration, and
-            reorders its members according to a canonical sequence defined in a small YAML config.
-            Comments and other trivia attached to a declaration travel with it — if you have a <code
-              class="inline-code">// MARK:</code
-            > note above a method, it moves wherever the method moves. The output is byte-identical to
-            the original except for member order.
+            The order is a list in a YAML file you commit with the code. Start from the default, or
+            make rules as specific as your team’s conventions: by visibility, by static or instance,
+            by whether a property carries an attribute.
           </p>
+        </div>
+        <div class="cards-grid cards-grid--wide">
+          <div class="stack-10">
+            <span class="label">Default</span>
+            <pre class="code-block">{config}</pre>
+          </div>
+          <div class="stack-10">
+            <span class="label">More specific rules</span>
+            <pre class="code-block">{complexRules}</pre>
+          </div>
+        </div>
+        <p class="note content-width">
+          Rules are read top to bottom and a member takes the first one that matches, so specific
+          rules go above the general ones. See the <a
+            href={`${docsBase}/USAGE.md#configuration-file`}
+            class="link-inline">configuration reference</a
+          >.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">How it works</h2>
           <p class="v-p300 text-text-t900">
-            Once enforced project-wide, every type tells the same story in the same order: what it
-            requires (typealiases, initializers), what it holds (properties), what it does
-            (methods). Reading a file becomes orientation rather than discovery, reviews stop
-            arguing about where a new declaration should sit, and merge conflicts in the same area
-            drop close to zero — because two developers writing in the same type land their changes
-            in predictable positions.
+            check and fix share one pipeline and part ways only at the last step, so what check
+            reports is exactly what fix will do.
           </p>
+        </div>
+        <ol class="steps">
+          {
+            steps.map((s, i) => (
+              <li class="step">
+                <span class="step__num">{String(i + 1).padStart(2, '0')}</span>
+                <span class="step__title">{s.title}</span>
+                <span class="step__body">{s.body}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Safe to run on everything</h2>
+          <p class="v-p300 text-text-t900">
+            A tool that rewrites source files has to earn trust before anyone runs it on a whole
+            codebase. swift-marshal only changes where declarations sit — never what they say.
+          </p>
+        </div>
+        <div class="cards-grid cards-grid--pair">
+          {
+            safety.map((f) => (
+              <div class="card">
+                <span class="card__title">{f.title}</span>
+                <span class="card__body">{f.body}</span>
+              </div>
+            ))
+          }
         </div>
       </div>
     </div>
@@ -183,7 +420,92 @@ const docs = [
   <section class="section-divider">
     <div class="wrap">
       <div class="stack-32">
-        <h2 class="h-section content-width">Features</h2>
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Built for CI</h2>
+          <p class="v-p300 text-text-t900">
+            A convention that lives in a wiki drifts. One that runs on every pull request doesn’t.
+          </p>
+        </div>
+        <div class="stack-32">
+          <div class="stack-10">
+            <span class="label">Commands</span>
+            <pre class="code-block">{ciCommands}</pre>
+          </div>
+          <div class="stack-10">
+            <span class="label">Dry-run output</span>
+            <pre class="code-block">{dryRunOutput}</pre>
+          </div>
+        </div>
+        <div class="cards-grid cards-grid--pair">
+          {
+            ciFeatures.map((f) => (
+              <div class="card">
+                <span class="card__title">{f.title}</span>
+                <span class="card__body">{f.body}</span>
+              </div>
+            ))
+          }
+        </div>
+        <a href={`${docsBase}/USAGE.md#cicd-integration`} class="link-arrow self-start"
+          >CI recipes<span aria-hidden="true">→</span></a
+        >
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Three commands to a tidy codebase</h2>
+          <p class="v-p300 text-text-t900">
+            Run check first to see the size of the change, then fix it in one commit — a pure
+            reordering diff that’s easy to review on its own.
+          </p>
+        </div>
+        <div class="stack-32">
+          <div class="stack-10">
+            <span class="label">Quick start</span>
+            <pre class="code-block">{quickStart}</pre>
+          </div>
+          <div class="stack-10">
+            <span class="label">check output</span>
+            <pre class="code-block">{checkOutput}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Inside Xcode</h2>
+          <p class="v-p300 text-text-t900">
+            Two plugins, no global install needed. The build plugin runs check on every build and
+            shows a warning on each type that is out of order. The command plugin runs fix when you
+            ask for it — from the terminal, or from Product → SwiftMarshal in Xcode.
+          </p>
+        </div>
+        <div class="stack-32">
+          <div class="stack-10">
+            <span class="label">Command plugin</span>
+            <pre class="code-block">{commandPlugin}</pre>
+          </div>
+          <div class="stack-10">
+            <span class="label">Build plugin warning</span>
+            <pre class="code-block">{xcodeOutput}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <h2 class="h-section content-width">Also included</h2>
         <div class="cards-grid cards-grid--narrow">
           {
             features.map((f) => (
@@ -198,7 +520,9 @@ const docs = [
     </div>
   </section>
 
-  <section class="section-divider section-divider--end">
+  <RelatedPosts slug="swift-marshal" />
+
+  <section class="section-divider">
     <div class="wrap">
       <div class="stack-32">
         <h2 class="h-section content-width">Documentation</h2>
@@ -211,6 +535,28 @@ const docs = [
               </a>
             ))
           }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider section-divider--end">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Free and open source</h2>
+          <p class="v-p300 text-text-t900">
+            MIT-licensed, no account, no telemetry. It runs on your machine and your CI runners, and
+            your code never leaves them. Issues, ideas and pull requests are welcome.
+          </p>
+        </div>
+        <div class="cta-row">
+          <a href={repo} target="_blank" rel="noopener noreferrer" class="btn-primary"
+            >View on GitHub</a
+          >
+          <a href={`${docsBase}/INSTALLATION.md`} class="link-arrow"
+            >Installation guide<span aria-hidden="true">→</span></a
+          >
         </div>
         <a href="#top" class="back-to-top">↑ Back to top</a>
       </div>
