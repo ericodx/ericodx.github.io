@@ -981,3 +981,128 @@ html {
     shape-outside: inset(0);
   }
 }
+
+/* === Product pages: stats, steps, data table === */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 32px 40px;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.stat__value {
+  font-size: 48px;
+  font-weight: 450;
+  line-height: 1;
+  letter-spacing: -2px;
+  color: #131623;
+}
+.stat__label {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #555;
+}
+.steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.table-scroll {
+  overflow-x: auto;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 17px;
+  color: #1f1f2f;
+}
+.data-table th,
+.data-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e9f0;
+  text-align: left;
+}
+.data-table th {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #888;
+}
+.data-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.data-table .mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 15px;
+}
+@media (max-width: 767px) {
+  .data-table {
+    font-size: 14px;
+  }
+  .data-table th,
+  .data-table td {
+    padding: 12px 6px;
+  }
+  .data-table th:first-child,
+  .data-table td:first-child {
+    padding-left: 0;
+  }
+  .data-table .mono {
+    font-size: 12px;
+  }
+}
+.note {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #888;
+}
+.cards-grid--pair {
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px) {
+  .cards-grid--pair {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.step {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 8px 16px;
+  padding: 24px 0;
+  border-top: 1px solid #e5e9f0;
+}
+.step:last-child {
+  border-bottom: 1px solid #e5e9f0;
+}
+.step__num {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 14px;
+  line-height: 1.9;
+  color: #888;
+}
+.step__title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #131623;
+}
+.step__body {
+  grid-column: 2;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #555;
+}
+@media (min-width: 1024px) {
+  .step {
+    grid-template-columns: 64px 220px 1fr;
+    gap: 24px;
+  }
+  .step__body {
+    grid-column: 3;
+    max-width: 720px;
+  }
+}
