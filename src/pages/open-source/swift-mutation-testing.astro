@@ -1,6 +1,11 @@
 ---
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
 import ToolHero from '../../components/ToolHero.astro';
 import Page from '../../layouts/Page.astro';
+
+const repo = 'https://github.com/ericodx/swift-mutation-testing';
+const docsBase = `${repo}/blob/main/Docs`;
 
 const sourceCode = `func isAdult(age: Int) -> Bool {
     return age >= 18
@@ -20,68 +25,233 @@ func test_isAdult() {
     XCTAssertFalse(isAdult(age: 10)) // still passes
 }`;
 
+const stats = [
+  { value: '1 build', label: 'for every schematizable mutant, however many there are' },
+  { value: '7', label: 'mutation operators, tiered by measured kill rates' },
+  { value: '6', label: 'report formats, from terminal to code scanning' },
+  { value: '0', label: 'dependencies to add to your project' },
+];
+
+const campaign = [
+  { project: 'swift-algorithms', mutants: 1112, score: '87.4%', time: '16 min' },
+  { project: 'swift-argument-parser', mutants: 822, score: '65.3%', time: '18 min' },
+  { project: 'swift-log', mutants: 209, score: '77.8%', time: '1 min' },
+  { project: 'swift-cpd', mutants: 987, score: '92.2%', time: '15 min' },
+  { project: 'swift-mutation-testing', mutants: 1275, score: '80.9%', time: '146 min' },
+];
+
+const steps = [
+  {
+    title: 'Discover',
+    body: 'SwiftSyntax parses every source file and finds each place an operator applies. Test code, package manifests and #if branches the build leaves out are skipped before they can inflate the count.',
+  },
+  {
+    title: 'Schematize',
+    body: 'Every mutant is written into the source at once, behind a runtime switch. The project builds a single time; each test run flips the switch to one mutant.',
+  },
+  {
+    title: 'Run',
+    body: 'Mutants run in parallel. Packages run the compiled test bundles directly, Xcode runs get one cloned simulator per worker. Each run stops at the first failing test.',
+  },
+  {
+    title: 'Verify',
+    body: 'Each mutant records whether its code actually executed. A passing suite that never reached it is no coverage, not a survivor — and a kill that never reached it is flagged.',
+  },
+  {
+    title: 'Report',
+    body: 'Text in the terminal, plus HTML, Stryker-compatible JSON, SonarQube, SARIF and Markdown — each one a flag away.',
+  },
+];
+
+const trust = [
+  {
+    title: 'Activation verification',
+    body: 'A marker proves the mutated line ran. Untouched code is reported as no coverage, the highest-priority gap, instead of hiding among survivors.',
+  },
+  {
+    title: 'Integrity warnings',
+    body: 'A mutant killed without its code running points at a flaky test, not a strong one. It is rerun alone; if it repeats, it is listed and can fail CI.',
+  },
+  {
+    title: 'Timeouts rerun in isolation',
+    body: 'A mutant that times out under load gets a second run with fewer workers. Only a timeout with no contention to blame becomes a verdict.',
+  },
+  {
+    title: 'No silent drops',
+    body: 'Before the build, every mutant is checked to be in the sandbox. A generator that lost a mutation stops the run instead of skewing the score.',
+  },
+];
+
+const ciFeatures = [
+  {
+    title: 'Baselines by fingerprint',
+    body: 'Record today’s survivors once, commit the file, fail on the next new one. Mutants match by declaration, operator and change — not by line number.',
+  },
+  {
+    title: 'Annotations on the pull request',
+    body: 'The SARIF report puts each undetected mutant on its line through GitHub code scanning; the Markdown report becomes the job summary.',
+  },
+  {
+    title: 'Plans, shards and merge',
+    body: 'Write the run down with plan, split it into shards across a CI matrix, and merge the slices into one report and one gate.',
+  },
+  {
+    title: 'Cache and resume',
+    body: 'Verdicts are cached by SHA-256 of source and tests. An interrupted run — Ctrl+C, a lost runner — continues from where it stopped.',
+  },
+];
+
+const gateOutput = `Quality gate: FAILED
+  ✓ score 90.4% ≥ 85.0%
+  ✓ score drop 0.7 pts ≤ 2.0 pts
+  ✗ 2 new undetected mutants (max 0)
+      Sources/Parser.swift:88   RelationalOperatorReplacement   < → <=
+      Sources/Cache.swift:12    RemoveSideEffects               remove store()
+  ℹ 3 mutants detected now that were undetected in the baseline`;
+
+const gateCommands = `# Once: accept the survivors you have today, and commit the file
+swift-mutation-testing --write-baseline .swift-mutation-testing-baseline.json
+
+# In CI: fail on the first survivor that is not in the baseline
+swift-mutation-testing --quiet \\
+  --baseline .swift-mutation-testing-baseline.json \\
+  --max-new-survivors 0 \\
+  --sarif-output mutation-report.sarif \\
+  --markdown-output mutation-summary.md`;
+
+const quickStart = `# Detects project type, scheme, destination and test targets
+swift-mutation-testing init
+
+# Run it
+swift-mutation-testing`;
+
+const sampleOutput = `  ✓ Discovery: 147 mutants (143 schematizable, 4 incompatible) in 2.3s
+
+Building for testing...
+  ✓ Built in 18.4s
+  ✓ 3 simulators ready
+
+Testing mutants...
+  ✓ 1/147  LogicalOperatorReplacement  Validator.swift:18
+  ✗ 2/147  NegateConditional           Validator.swift:34
+  ✓ 3/147  SwapTernary                 FeatureFlags.swift:9
+
+Undetected mutants:
+  Sources/Validator.swift:34:5   NegateConditional   survived
+
+Overall mutation score: 85.3%`;
+
+const agentInstall = `claude plugin marketplace add ericodx/swift-mutation-testing
+claude plugin install swift-mutation-testing@swift-mutation-testing`;
+
 const features = [
   {
-    title: 'Works with Xcode and SPM',
-    body: 'Targets both project layouts. Auto-detects scheme, destination, and test targets on init.',
+    title: 'Xcode and SPM',
+    body: 'Projects, workspaces — every project and module in one build — and Swift packages.',
   },
   {
     title: 'XCTest and Swift Testing',
-    body: 'Both frameworks are first-class. Mix them in the same project — the runner adapts.',
+    body: 'Both frameworks are first-class, and init detects which one a target uses.',
   },
   {
-    title: 'Fast by default',
-    body: 'Schematized execution builds the project once and switches mutants at runtime. SHA-based result caching avoids re-running unchanged code across CI builds.',
+    title: 'iOS, tvOS, watchOS, macOS',
+    body: 'Simulator pools are created per run and deleted when it ends.',
   },
   {
-    title: 'CI-ready report formats',
-    body: 'Text, HTML, JSON (Stryker-compatible), and SonarQube outputs. Drop a report into your pipeline and it just plugs in.',
+    title: 'Operator tiers',
+    body: 'conservative, default or experimental — chosen from a campaign on real packages, not opinion.',
+  },
+  {
+    title: 'Suppression by comment',
+    body: 'disable on a declaration, disable-next-line on a line. Plain comments, nothing to import.',
+  },
+  {
+    title: 'Reproduce one mutant',
+    body: 'reproduce reruns a single mutant with the full suite and keeps its sandbox for investigation.',
   },
 ];
 
 const docs = [
   {
     name: 'Installation',
-    desc: 'Homebrew, pre-built binary, build from source',
-    href: 'https://github.com/ericodx/swift-mutation-testing/blob/main/Docs/INSTALLATION.MD',
+    desc: 'Homebrew, pre-built binary, build from source, Claude Code plugin',
+    href: `${docsBase}/INSTALLATION.MD`,
   },
   {
     name: 'Usage & Configuration',
-    desc: 'CLI options, YAML config, output formats, CI integration',
-    href: 'https://github.com/ericodx/swift-mutation-testing/blob/main/Docs/USAGE.MD',
+    desc: 'CLI options, YAML config, plans and sharding, quality gate, CI recipes',
+    href: `${docsBase}/USAGE.MD`,
   },
   {
     name: 'Mutation Results',
-    desc: 'What each result means and when it occurs; schematizable vs incompatible mutants',
-    href: 'https://github.com/ericodx/swift-mutation-testing/blob/main/Docs/MUTATION-RESULTS.md',
+    desc: 'What each verdict means, how the score is computed, schematizable vs incompatible',
+    href: `${docsBase}/MUTATION-RESULTS.md`,
+  },
+  {
+    name: 'Operators',
+    desc: 'Every operator’s tier, the campaign that measured it, and how to reproduce it',
+    href: `${docsBase}/OPERATORS.md`,
+  },
+  {
+    name: 'Stryker Compatibility',
+    desc: 'How the JSON report maps to the Stryker mutation-testing schema',
+    href: `${docsBase}/STRYKER-COMPATIBILITY.md`,
   },
   {
     name: 'Architecture',
     desc: 'Pipeline design, module map, schematization, execution model',
-    href: 'https://github.com/ericodx/swift-mutation-testing/blob/main/Docs/Architecture/README.md',
+    href: `${docsBase}/Architecture/README.md`,
   },
 ];
+
+const posts = (
+  await getCollection(
+    'blog',
+    ({ data, body }) =>
+      (import.meta.env.DEV || (!data.draft && data.pubDate <= new Date())) &&
+      (data.tags.includes('Mutation Testing') || (body ?? '').includes('swift-mutation-testing')),
+  )
+)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 6);
 ---
 
 <Page
   title="Swift Mutation Testing"
-  description="Measure and improve test effectiveness in Swift codebases using mutation testing."
+  description="A mutation testing CLI for Swift. Find the tests that run your code without checking it — in Xcode projects and Swift packages, locally and in CI."
 >
   <ToolHero
     slug="swift-mutation-testing"
     title="Swift Mutation Testing"
-    lead="Traditional test coverage tells you which lines ran — not whether the tests would actually catch a bug. Mutation testing introduces small, controlled changes to your code and re-runs your test suite. Every change that goes undetected exposes a missing assertion or a blind spot. The result is a mutation score that reflects how much your tests actually verify."
+    lead="Coverage tells you which lines your tests ran. It can’t tell you whether a single assertion would notice if those lines were wrong. swift-mutation-testing plants small, deliberate bugs in your Swift code and runs your suite against each one. Every bug that slips through points at a test that isn’t checking what you think it is — and the mutation score tells you how much your tests actually verify."
   />
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stat-grid">
+        {
+          stats.map((s) => (
+            <div class="stat">
+              <span class="stat__value">{s.value}</span>
+              <span class="stat__label">{s.label}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
 
   <section class="section-divider">
     <div class="wrap">
       <div class="stack-32">
         <div class="stack-12 content-width">
-          <h2 class="h-section">Example mutation</h2>
+          <h2 class="h-section">100% coverage, one missing test</h2>
           <p class="v-p300 text-text-t900">
-            A small change to the source. If your tests still pass against the mutant, you have a
-            gap — the test you thought protected this line doesn’t actually distinguish the original
-            behavior from the change.
+            Both tests run every line of <code class="inline-code">isAdult</code>. Change <code
+              class="inline-code">&gt;=</code
+            > to <code class="inline-code">&gt;</code> and they still pass — nothing checks the boundary
+            at 18. A coverage report calls this function done. A mutation report calls it a survivor,
+            with the file, the line and the exact change.
           </p>
         </div>
         <div class="cards-grid cards-grid--wide">
@@ -90,28 +260,108 @@ const docs = [
             <pre class="code-block">{sourceCode}</pre>
           </div>
           <div class="stack-10">
-            <span class="label">Mutant</span>
+            <span class="label">Mutant — survived</span>
             <pre class="code-block">{mutatedCode}</pre>
           </div>
         </div>
-        <div class="content-width stack-16">
+        <p class="v-p300 text-text-t900 content-width">
+          The fix is one assertion: <code class="inline-code">XCTAssertTrue(isAdult(age: 18))</code
+          >. Finding it by hand, across a codebase, is the hard part. That’s the part the tool does.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Measured on real code</h2>
           <p class="v-p300 text-text-t900">
-            A mutation test works by deliberately corrupting your code in small, controlled ways and
-            then asking whether your test suite notices. The change above — <code
-              class="inline-code">&gt;=</code
-            > becoming <code class="inline-code">&gt;</code> — is a single mutation. swift-mutation-testing
-            applies many of these across your code, runs your tests against each variant, and records
-            the outcome. A mutation that passes the test suite is said to have <em>survived</em>;
-            one that fails is <em>killed</em>.
+            Every operator earns its place from a campaign on open source Swift packages: kill
+            rates, compile failures, and hand-reviewed survivors. The everyday run uses only the
+            operators whose survivors are almost always real gaps. Here is the last campaign, every
+            operator on.
           </p>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Package</th>
+                <th scope="col" class="num">Mutants</th>
+                <th scope="col" class="num">Score</th>
+                <th scope="col" class="num">Wall time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                campaign.map((row) => (
+                  <tr>
+                    <td class="mono">{row.project}</td>
+                    <td class="num">{row.mutants.toLocaleString('en-US')}</td>
+                    <td class="num">{row.score}</td>
+                    <td class="num">{row.time}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="note content-width">
+          October 2026, Apple M4 Max, all seven operators. The last package is the tool itself; on
+          the default operators its own suite scores 99.8%. Raw data and the steps to reproduce it
+          are in <a href={`${docsBase}/OPERATORS.md`} class="link-inline">Operators</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">How it works</h2>
           <p class="v-p300 text-text-t900">
-            What survival reveals is uncomfortable but useful: a test that ran, a line that was
-            covered, an assertion that didn’t actually distinguish the original behavior from the
-            corrupted one. Coverage tells you which lines your tests touched. Mutation testing tells
-            you whether those tests would notice if the lines were wrong. The percentage of
-            mutations killed — the mutation score — is a more honest read on test effectiveness than
-            coverage alone.
+            The naive approach — one build per mutant — turns a 20-second build and 200 mutants into
+            an hour before a single test runs. The pipeline is designed around never doing that.
           </p>
+        </div>
+        <ol class="steps">
+          {
+            steps.map((s, i) => (
+              <li class="step">
+                <span class="step__num">{String(i + 1).padStart(2, '0')}</span>
+                <span class="step__title">{s.title}</span>
+                <span class="step__body">{s.body}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">A score you can defend</h2>
+          <p class="v-p300 text-text-t900">
+            A mutation score is only worth something if every verdict in it is real. A flaky test
+            that fails at random “kills” mutants it never looked at, and a high number built on that
+            is worse than no number at all. So the tool checks its own work.
+          </p>
+        </div>
+        <div class="cards-grid cards-grid--pair">
+          {
+            trust.map((f) => (
+              <div class="card">
+                <span class="card__title">{f.title}</span>
+                <span class="card__body">{f.body}</span>
+              </div>
+            ))
+          }
         </div>
       </div>
     </div>
@@ -120,7 +370,90 @@ const docs = [
   <section class="section-divider">
     <div class="wrap">
       <div class="stack-32">
-        <h2 class="h-section content-width">Features</h2>
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Built for CI</h2>
+          <p class="v-p300 text-text-t900">
+            You don’t need a perfect score to adopt it. Accept the survivors you have today in a
+            baseline, and let the quality gate fail the build on the first new one — exit code
+            <code class="inline-code">2</code>, after every report is written.
+          </p>
+        </div>
+        <div class="stack-32">
+          <div class="stack-10">
+            <span class="label">Commands</span>
+            <pre class="code-block">{gateCommands}</pre>
+          </div>
+          <div class="stack-10">
+            <span class="label">Gate output</span>
+            <pre class="code-block">{gateOutput}</pre>
+          </div>
+        </div>
+        <div class="cards-grid cards-grid--pair">
+          {
+            ciFeatures.map((f) => (
+              <div class="card">
+                <span class="card__title">{f.title}</span>
+                <span class="card__body">{f.body}</span>
+              </div>
+            ))
+          }
+        </div>
+        <a href={`${docsBase}/USAGE.MD#cicd-integration`} class="link-arrow self-start"
+          >Full GitHub Actions workflow<span aria-hidden="true">→</span></a
+        >
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Two commands to a score</h2>
+          <p class="v-p300 text-text-t900">
+            <code class="inline-code">init</code> writes a small <code class="inline-code"
+              >.swift-mutation-testing.yml</code
+            > with what it found. For a Swift package there’s nothing to configure at all.
+          </p>
+        </div>
+        <div class="stack-32">
+          <div class="stack-10">
+            <span class="label">Quick start</span>
+            <pre class="code-block">{quickStart}</pre>
+          </div>
+          <div class="stack-10">
+            <span class="label">Output</span>
+            <pre class="code-block">{sampleOutput}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Works with coding agents</h2>
+          <p class="v-p300 text-text-t900">
+            The repository is also a Claude Code plugin. Its skill teaches the agent when to run
+            mutation testing, how to read the report, and how to write the test that kills a
+            surviving mutant. Ask “how good are the tests in this package?” and it takes it from
+            there.
+          </p>
+        </div>
+        <div class="install-block">
+          <span class="label">Install the plugin</span>
+          <pre class="code-block">{agentInstall}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <h2 class="h-section content-width">Also included</h2>
         <div class="cards-grid cards-grid--narrow">
           {
             features.map((f) => (
@@ -135,7 +468,35 @@ const docs = [
     </div>
   </section>
 
-  <section class="section-divider section-divider--end">
+  {
+    posts.length > 0 && (
+      <section class="section-divider">
+        <div class="wrap">
+          <div class="stack-32">
+            <div class="stack-12 content-width">
+              <h2 class="h-section">From the blog</h2>
+              <p class="v-p300 text-text-t900">
+                Notes from building it — the bugs, the measurements, and the design decisions.
+              </p>
+            </div>
+            <div class="posts-grid">
+              {posts.map((post) => (
+                <a href={`/blog/${post.id}/`} class="card">
+                  <span class="card__meta">
+                    <FormattedDate date={post.data.pubDate} />
+                  </span>
+                  <span class="card__title">{post.data.title}</span>
+                  <span class="card__body">{post.data.description}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section-divider">
     <div class="wrap">
       <div class="stack-32">
         <h2 class="h-section content-width">Documentation</h2>
@@ -148,6 +509,28 @@ const docs = [
               </a>
             ))
           }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider section-divider--end">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Free and open source</h2>
+          <p class="v-p300 text-text-t900">
+            MIT-licensed, no account, no telemetry. It runs on your machine and your CI runners, and
+            your code never leaves them. Issues, ideas and pull requests are welcome.
+          </p>
+        </div>
+        <div class="cta-row">
+          <a href={repo} target="_blank" rel="noopener noreferrer" class="btn-primary"
+            >View on GitHub</a
+          >
+          <a href={`${docsBase}/INSTALLATION.MD`} class="link-arrow"
+            >Installation guide<span aria-hidden="true">→</span></a
+          >
         </div>
         <a href="#top" class="back-to-top">↑ Back to top</a>
       </div>
