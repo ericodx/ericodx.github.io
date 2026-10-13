@@ -1,6 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
 import ToolHero from '../../components/ToolHero.astro';
 import Page from '../../layouts/Page.astro';
 
@@ -203,17 +202,6 @@ const docs = [
     href: `${docsBase}/Architecture/README.md`,
   },
 ];
-
-const posts = (
-  await getCollection(
-    'blog',
-    ({ data, body }) =>
-      (import.meta.env.DEV || (!data.draft && data.pubDate <= new Date())) &&
-      (data.tags.includes('Mutation Testing') || (body ?? '').includes('swift-mutation-testing')),
-  )
-)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 6);
 ---
 
 <Page
@@ -468,33 +456,7 @@ const posts = (
     </div>
   </section>
 
-  {
-    posts.length > 0 && (
-      <section class="section-divider">
-        <div class="wrap">
-          <div class="stack-32">
-            <div class="stack-12 content-width">
-              <h2 class="h-section">From the blog</h2>
-              <p class="v-p300 text-text-t900">
-                Notes from building it — the bugs, the measurements, and the design decisions.
-              </p>
-            </div>
-            <div class="posts-grid">
-              {posts.map((post) => (
-                <a href={`/blog/${post.id}/`} class="card">
-                  <span class="card__meta">
-                    <FormattedDate date={post.data.pubDate} />
-                  </span>
-                  <span class="card__title">{post.data.title}</span>
-                  <span class="card__body">{post.data.description}</span>
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-    )
-  }
+  <RelatedPosts slug="swift-mutation-testing" tags={['Mutation Testing']} />
 
   <section class="section-divider">
     <div class="wrap">

@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  // A post is related when it carries one of these tags, or names the tool at least twice.
+  slug: string;
+  tags?: string[];
+  limit?: number;
+}
+
+const { slug, tags = [], limit = 6 } = Astro.props;
+
+const mentions = (body: string) => body.split(slug).length - 1;
+
+const posts = (
+  await getCollection(
+    'blog',
+    ({ data, body }) =>
+      (import.meta.env.DEV || (!data.draft && data.pubDate <= new Date())) &&
+      (data.tags.some((tag) => tags.includes(tag)) || mentions(body ?? '') >= 2),
+  )
+)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, limit);
+---
+
+{
+  posts.length > 0 && (
+    <section class="section-divider">
+      <div class="wrap">
+        <div class="stack-32">
+          <div class="stack-12 content-width">
+            <h2 class="h-section">From the blog</h2>
+            <p class="v-p300 text-text-t900">
+              Notes from building it — the bugs, the measurements, and the design decisions.
+            </p>
+          </div>
+          <div class="posts-grid">
+            {posts.map((post) => (
+              <a href={`/blog/${post.id}/`} class="card">
+                <span class="card__meta">
+                  <FormattedDate date={post.data.pubDate} />
+                </span>
+                <span class="card__title">{post.data.title}</span>
+                <span class="card__body">{post.data.description}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
