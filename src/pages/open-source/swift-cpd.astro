@@ -1,128 +1,251 @@
 ---
+import RelatedPosts from '../../components/RelatedPosts.astro';
 import ToolHero from '../../components/ToolHero.astro';
 import Page from '../../layouts/Page.astro';
 
-const cloneA = `// Sources/App/Services/UserService.swift
+const repo = 'https://github.com/ericodx/swift-cpd';
+const docsBase = `${repo}/blob/main/Docs`;
 
-func validate(_ user: User) -> Bool {
-    guard !user.name.isEmpty else { return false }
-    guard user.age >= 18 else { return false }
-    guard user.email.contains("@") else { return false }
-    return true
+const cloneA = `struct SignUpValidator {
+    func validate(_ form: Form) -> Bool {
+        guard !form.name.isEmpty else { return false }
+        guard form.age >= 18 else { return false }
+        guard form.email.contains("@") else { return false }
+        guard form.country.count == 2 else { return false }
+        return true
+    }
 }`;
 
-const cloneB = `// Sources/App/Services/ProductService.swift
-
-func validate(_ product: Product) -> Bool {
-    guard !product.name.isEmpty else { return false }
-    guard product.price >= 0 else { return false }
-    guard product.sku.contains("-") else { return false }
-    return true
+const cloneB = `struct CheckoutValidator {
+    func validate(_ form: Form) -> Bool {
+        guard !form.holder.isEmpty else { return false }
+        guard form.amount >= 1 else { return false }
+        guard form.card.contains(" ") else { return false }
+        guard form.currency.count == 3 else { return false }
+        return true
+    }
 }`;
+
+const cloneOutput = `$ swift-cpd
+Found 1 clone(s) in 2 files (0.00s)
+
+Clone 1 (Type-2, 67 tokens, 9 lines):
+  Sources/App/Features/CheckoutValidator.swift:1-9
+  Sources/App/Features/SignUpValidator.swift:1-9`;
+
+const stats = [
+  { value: '4', label: 'clone types, from exact copies to the same behavior' },
+  { value: '3', label: 'languages: Swift, Objective-C and C' },
+  { value: '4', label: 'output formats, including inline Xcode warnings' },
+  { value: '0', label: 'dependencies to add to your project' },
+];
+
+const cloneTypes = [
+  {
+    name: 'Type-1 · Exact',
+    body: 'The same code, token for token. The copy-paste nobody touched since.',
+  },
+  {
+    name: 'Type-2 · Parameterized',
+    body: 'The same structure with different names and literals — the example above.',
+  },
+  {
+    name: 'Type-3 · Near-miss',
+    body: 'A copy that has since grown, lost or swapped a few statements. Scored by Greedy String Tiling, 70% similarity by default.',
+  },
+  {
+    name: 'Type-4 · Semantic',
+    body: 'Different code, same behavior. Compared by control flow, data flow, calls and types, 80% similarity by default.',
+  },
+];
+
+const steps = [
+  {
+    title: 'Discover',
+    body: 'Finds the Swift files in your configured paths — plus .m, .mm, .h, .c and .cpp with --cross-language — and leaves out what your exclude patterns name. Or reads them from a git ref instead of the working tree.',
+  },
+  {
+    title: 'Tokenize',
+    body: 'SwiftSyntax tokenizes Swift; a C-family tokenizer handles the rest. Files are processed concurrently and cached by content hash, so unchanged files cost nothing on the next run.',
+  },
+  {
+    title: 'Normalize',
+    body: 'Identifiers, numbers and strings become placeholders. Type names and called functions stay as they are, so code that only looks alike is not reported. Suppressed regions are removed here.',
+  },
+  {
+    title: 'Detect',
+    body: 'A rolling hash finds exact and parameterized clones in linear time per file. Near-miss and semantic clones go through pre-filters first, so the expensive comparisons only run on likely pairs.',
+  },
+  {
+    title: 'Report',
+    body: 'Text, JSON, a self-contained HTML page, or warnings Xcode shows in the editor — with the duplication percentage the quality gate checks.',
+  },
+];
+
+const signal = [
+  {
+    title: 'Types keep their names',
+    body: 'Normalization keeps type names and called functions, so Color(r: 0) and GridToken(columns: 2) are not a clone just because they share a shape.',
+  },
+  {
+    title: 'Thresholds you choose',
+    body: '50 tokens and 5 lines by default, and a similarity threshold for each structural type. Lower them to hunt small clones, raise them to see only the big ones.',
+  },
+  {
+    title: 'Filters for the common cases',
+    body: 'Skip clones that live inside one file, or keep only exact and parameterized clones while you start. Both are a line in the config.',
+  },
+  {
+    title: 'Suppression by comment',
+    body: '// swiftcpd:ignore before a declaration leaves its whole body out; before a line, just that line. Nothing to import, nothing in your build.',
+  },
+];
+
+const gateCommands = `# Fail the build when duplication goes above 3%
+swift-cpd --max-duplication 3 Sources/
+
+# Or accept today's clones once, and fail only on new ones
+swift-cpd --baseline-generate Sources/
+swift-cpd --baseline .swift-cpd-baseline.json Sources/`;
+
+const preCommit = `# .pre-commit-config.yaml — check exactly what is being committed
+- repo: https://github.com/ericodx/swift-cpd
+  hooks:
+    - id: swift-cpd
+      args: [--source-ref, ":0"]`;
+
+const ciFeatures = [
+  {
+    title: 'Quality gate',
+    body: '--max-duplication turns the duplication percentage into a pass or fail. Exit code 1 means clones; 2 and 3 are configuration and analysis errors, so CI can tell them apart.',
+  },
+  {
+    title: 'Baselines for legacy code',
+    body: 'Record the clones you already have, commit the file, and report only new ones. Combined with the gate, the threshold applies to new clones alone.',
+  },
+  {
+    title: 'pre-commit, done right',
+    body: 'With --source-ref :0 the hook reads the staged blobs, not a half-stashed working tree, so it reports what the commit will actually contain.',
+  },
+  {
+    title: 'Reports to keep',
+    body: 'A JSON report with a stable, sorted schema for scripts, and a self-contained HTML report to attach as a build artifact.',
+  },
+];
+
+const quickStart = `# Finds your sources and writes .swift-cpd.yml
+swift-cpd init
+
+# Run it
+swift-cpd`;
+
+const pluginSetup = `// Package.swift
+.target(
+    name: "MyTarget",
+    plugins: [.plugin(name: "SwiftCPDPlugin", package: "swift-cpd")]
+)`;
+
+const xcodeOutput = `Sources/App/Features/CheckoutValidator.swift:1:1: warning: Clone detected (Type-2, 67 tokens, 9 lines) — also in SignUpValidator.swift:1
+Sources/App/Features/SignUpValidator.swift:1:1: warning: Clone detected (Type-2, 67 tokens, 9 lines) — also in CheckoutValidator.swift:1`;
 
 const features = [
   {
-    title: 'AST-based detection',
-    body: 'Looks at structure, not text. Two functions with renamed variables but the same shape are still flagged as a clone.',
+    title: 'Across languages',
+    body: 'Swift and Objective-C tokens map to one vocabulary, so a Swift rewrite of an Objective-C class can be found next to the original.',
   },
   {
-    title: 'Swift, Objective-C, and C',
-    body: 'One tool across the whole Apple-platform codebase, including legacy modules and bridging layers.',
+    title: 'Any git ref',
+    body: 'Analyze HEAD, a branch, a sha or the index instead of the working tree. The cache is keyed by the resolved sha.',
   },
   {
-    title: 'CI-ready enforcement',
-    body: 'Run in pipelines to fail builds when new duplication appears. Treat duplication as a policy, not a habit.',
-  },
-  {
-    title: 'Configurable thresholds',
-    body: 'Tune minimum token count, line count, clone types, and exclusion patterns through a small YAML file.',
+    title: 'init that finds your code',
+    body: 'Picks Sources/ when it exists, or every top-level folder with Swift files — skipping build and dependency folders.',
   },
 ];
 
 const docs = [
   {
     name: 'Installation',
-    desc: 'Homebrew, binary, source, pre-commit, Xcode plugin',
-    href: 'https://github.com/ericodx/swift-cpd/blob/main/Docs/INSTALLATION.md',
+    desc: 'Homebrew, pre-built binary, build from source, pre-commit hook',
+    href: `${docsBase}/INSTALLATION.md`,
   },
   {
     name: 'Usage & Configuration',
-    desc: 'CLI options, YAML config, output formats, CI integration',
-    href: 'https://github.com/ericodx/swift-cpd/blob/main/Docs/USAGE.md',
+    desc: 'CLI options, YAML config, baselines, git refs, CI recipes, exit codes',
+    href: `${docsBase}/USAGE.md`,
   },
   {
     name: 'Xcode Plugin',
-    desc: 'Step-by-step Xcode and SPM plugin setup',
-    href: 'https://github.com/ericodx/swift-cpd/blob/main/Docs/xcode-plugin.md',
+    desc: 'Step-by-step Xcode and SPM build plugin setup',
+    href: `${docsBase}/xcode-plugin.md`,
   },
   {
     name: 'Architecture',
-    desc: 'System design, pipeline, detection algorithms',
-    href: 'https://github.com/ericodx/swift-cpd/blob/main/Docs/Architecture/README.md',
+    desc: 'Pipeline, tokenization, and the four detection algorithms',
+    href: `${docsBase}/Architecture/README.md`,
+  },
+  {
+    name: 'Codebase Reference',
+    desc: 'Every type, protocol, and algorithm documented',
+    href: `${docsBase}/CodeBase/README.md`,
+  },
+  {
+    name: 'Contributing',
+    desc: 'Technical principles, code style, and workflow',
+    href: `${repo}/blob/main/CONTRIBUTING.md`,
   },
 ];
 ---
 
 <Page
   title="Swift CPD"
-  description="Detect and eliminate duplicated logic in Swift and Objective-C/C codebases to improve maintainability and code quality."
+  description="A copy-paste detector for Swift, Objective-C and C. Finds duplicated logic by structure — renamed, edited, or rewritten — locally, in Xcode, and in CI."
 >
   <ToolHero
     slug="swift-cpd"
-    title="Swift Code Paste Detector"
-    lead="Duplicated logic looks small until it isn’t. Two copies drift apart, bugs get fixed in one place and not the other, behavior diverges between features that should be consistent — and every refactor multiplies in cost. swift-cpd finds the duplicates before they compound, through structural analysis across Swift, Objective-C, and C."
+    title="Swift CPD"
+    lead="Duplicated code rarely looks dangerous on the day it’s pasted. It becomes dangerous the day one copy gets a fix and the other doesn’t. swift-cpd finds duplicated logic by its structure, not its text — through renamed variables, changed literals, edited lines and even different implementations of the same behavior — across Swift, Objective-C and C."
   />
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stat-grid">
+        {
+          stats.map((s) => (
+            <div class="stat">
+              <span class="stat__value">{s.value}</span>
+              <span class="stat__label">{s.label}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
 
   <section class="section-divider">
     <div class="wrap">
       <div class="stack-32">
         <div class="stack-12 content-width">
-          <h2 class="h-section">What it detects</h2>
+          <h2 class="h-section">Different words, same code</h2>
           <p class="v-p300 text-text-t900">
-            Same shape, different types. Renamed variables, different value checks — but the control
-            flow is identical. swift-cpd surfaces this as a structural clone, so you can decide
-            whether to extract a shared validator or accept the duplication consciously.
+            Every field, literal and threshold below is different. A text diff sees two unrelated
+            functions. swift-cpd sees the same 67 tokens once names and values are set aside — and
+            the day the rules change in one of them, the other is your next bug report.
           </p>
         </div>
         <div class="cards-grid cards-grid--wide">
           <div class="stack-10">
-            <span class="label">File A</span>
+            <span class="label">SignUpValidator.swift</span>
             <pre class="code-block">{cloneA}</pre>
           </div>
           <div class="stack-10">
-            <span class="label">File B</span>
+            <span class="label">CheckoutValidator.swift</span>
             <pre class="code-block">{cloneB}</pre>
           </div>
         </div>
-        <div class="content-width stack-16">
-          <p class="v-p300 text-text-t900">
-            The simplest case is the exact clone (Type 1), where the same block of code appears in
-            more than one place and only whitespace or comments differ between the copies. This is
-            what classic copy-paste creates: someone needed the same logic somewhere else,
-            duplicated it, and moved on. It is also the easiest kind to spot once you know to look.
-          </p>
-          <p class="v-p300 text-text-t900">
-            A parameterized clone (Type 2) has the same shape as another block, but the names and
-            values inside have been changed. The example above is one of these: two validators with
-            identical control flow, only operating on different types. This is what happens when
-            copy-paste meets a small edit — the code was duplicated and then tweaked to fit a new
-            context. swift-cpd sees past the renaming and reports both fragments as the same logic.
-          </p>
-          <p class="v-p300 text-text-t900">
-            A near-miss clone (Type 3) is one where two blocks share most of their structure, but
-            somewhere along the way a few statements were added, removed, or modified. Maybe an
-            extra condition was inserted in one place, or a log line dropped in the other. The
-            intent is still clearly the same on both sides, and swift-cpd still recognizes them as
-            related — you can decide how forgiving the match should be by adjusting the similarity
-            threshold.
-          </p>
-          <p class="v-p300 text-text-t900">
-            The hardest class is the semantic clone (Type 4). Here, two pieces of code look
-            completely different on the surface — different variable names, different control flow,
-            even a different order of operations — but they do the same thing. This is where
-            swift-cpd reaches beyond text and structure to compare actual behavior, catching
-            rewrites and reorganizations that line-based or token-based detectors miss entirely.
-          </p>
+        <div class="stack-10">
+          <span class="label">Output</span>
+          <pre class="code-block">{cloneOutput}</pre>
         </div>
       </div>
     </div>
@@ -131,7 +254,165 @@ const docs = [
   <section class="section-divider">
     <div class="wrap">
       <div class="stack-32">
-        <h2 class="h-section content-width">Features</h2>
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Four kinds of duplication</h2>
+          <p class="v-p300 text-text-t900">
+            Most copy-paste detectors stop at the first two. The copies that hurt are usually the
+            ones that were edited after the paste — or rewritten from memory.
+          </p>
+        </div>
+        <div class="cards-grid cards-grid--pair">
+          {
+            cloneTypes.map((t) => (
+              <div class="card">
+                <span class="card__title">{t.name}</span>
+                <span class="card__body">{t.body}</span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">How it works</h2>
+          <p class="v-p300 text-text-t900">
+            Comparing every fragment with every other one doesn’t scale past a small project. Each
+            stage narrows the work for the next, so the expensive comparisons only see pairs that
+            are likely to be clones.
+          </p>
+        </div>
+        <ol class="steps">
+          {
+            steps.map((s, i) => (
+              <li class="step">
+                <span class="step__num">{String(i + 1).padStart(2, '0')}</span>
+                <span class="step__title">{s.title}</span>
+                <span class="step__body">{s.body}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Signal, not noise</h2>
+          <p class="v-p300 text-text-t900">
+            A detector that flags every two functions with a guard statement gets turned off within
+            a week. The defaults aim at duplication worth a refactor, and everything is tunable.
+          </p>
+        </div>
+        <div class="cards-grid cards-grid--pair">
+          {
+            signal.map((f) => (
+              <div class="card">
+                <span class="card__title">{f.title}</span>
+                <span class="card__body">{f.body}</span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Built for CI</h2>
+          <p class="v-p300 text-text-t900">
+            Duplication you only see in a dashboard keeps growing. Make it a rule instead: a
+            threshold for the whole codebase, or a baseline that lets existing clones be and stops
+            new ones at the door.
+          </p>
+        </div>
+        <div class="stack-32">
+          <div class="stack-10">
+            <span class="label">Commands</span>
+            <pre class="code-block">{gateCommands}</pre>
+          </div>
+          <div class="stack-10">
+            <span class="label">pre-commit</span>
+            <pre class="code-block">{preCommit}</pre>
+          </div>
+        </div>
+        <div class="cards-grid cards-grid--pair">
+          {
+            ciFeatures.map((f) => (
+              <div class="card">
+                <span class="card__title">{f.title}</span>
+                <span class="card__body">{f.body}</span>
+              </div>
+            ))
+          }
+        </div>
+        <a href={`${docsBase}/USAGE.md#cicd-integration`} class="link-arrow self-start"
+          >CI recipes<span aria-hidden="true">→</span></a
+        >
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Two commands to a report</h2>
+          <p class="v-p300 text-text-t900">
+            <code class="inline-code">init</code> writes a small <code class="inline-code"
+              >.swift-cpd.yml</code
+            > with the folders it found. The second command is the whole analysis.
+          </p>
+        </div>
+        <div class="stack-32">
+          <div class="stack-10">
+            <span class="label">Quick start</span>
+            <pre class="code-block">{quickStart}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Warnings where you write code</h2>
+          <p class="v-p300 text-text-t900">
+            The build plugin runs swift-cpd on every build of an Xcode or SPM target and shows each
+            clone as a warning on its line in the editor. It never fails the build — it just makes
+            the duplication hard to miss.
+          </p>
+        </div>
+        <div class="stack-32">
+          <div class="stack-10">
+            <span class="label">Add the plugin</span>
+            <pre class="code-block">{pluginSetup}</pre>
+          </div>
+          <div class="stack-10">
+            <span class="label">Build output</span>
+            <pre class="code-block">{xcodeOutput}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="wrap">
+      <div class="stack-32">
+        <h2 class="h-section content-width">Also included</h2>
         <div class="cards-grid cards-grid--narrow">
           {
             features.map((f) => (
@@ -146,7 +427,9 @@ const docs = [
     </div>
   </section>
 
-  <section class="section-divider section-divider--end">
+  <RelatedPosts slug="swift-cpd" />
+
+  <section class="section-divider">
     <div class="wrap">
       <div class="stack-32">
         <h2 class="h-section content-width">Documentation</h2>
@@ -159,6 +442,28 @@ const docs = [
               </a>
             ))
           }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider section-divider--end">
+    <div class="wrap">
+      <div class="stack-32">
+        <div class="stack-12 content-width">
+          <h2 class="h-section">Free and open source</h2>
+          <p class="v-p300 text-text-t900">
+            MIT-licensed, no account, no telemetry. It runs on your machine and your CI runners, and
+            your code never leaves them. Issues, ideas and pull requests are welcome.
+          </p>
+        </div>
+        <div class="cta-row">
+          <a href={repo} target="_blank" rel="noopener noreferrer" class="btn-primary"
+            >View on GitHub</a
+          >
+          <a href={`${docsBase}/INSTALLATION.md`} class="link-arrow"
+            >Installation guide<span aria-hidden="true">→</span></a
+          >
         </div>
         <a href="#top" class="back-to-top">↑ Back to top</a>
       </div>
